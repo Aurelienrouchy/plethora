@@ -2,7 +2,7 @@ import React, {
     useContext, useState, useEffect, useMemo,
 } from 'react';
 import {
-    StyleSheet, View, Text, TouchableOpacity, Dimensions, Image
+    StyleSheet, View, Text, TouchableOpacity, Dimensions, Image, Button
 } from 'react-native';
 import { AdMobRewarded } from 'expo-ads-admob'
 import { SharedElement } from 'react-navigation-shared-element';
@@ -15,40 +15,34 @@ import { SharedElement } from 'react-navigation-shared-element';
 
 // import Scratch from '../components/Scratch/index.js';
 import Animated from 'react-native-reanimated';
+import { useNavigation } from '@react-navigation/native';
+import CroixScratch from '../components/CroixScratch';
+import PlayButton from '../components/PlayButton';
+import { useTicketStore } from '../utils/store';
+import { isReady, requestAd, showAd } from '../utils/ads';
 
 const { width, height } = Dimensions.get('screen');
 
-const Play = ({ navigation }) => {
-    const [isScratched, setIsScratched] = useState(false);
-    // const transition = useTimingTransition(isScratched, { duration: 300 });
-    // const croixContainerWidth =      interpolate(transition, { inputRange: [0, 1], outputRange: [50, 200] });
-    // const croixContainerTranslateX = interpolate(transition, { inputRange: [0, 1], outputRange: [0, -150] });
-    // const croixTranslateX =          interpolate(transition, { inputRange: [0, 1], outputRange: [0, 100] });
-    // const croixOpacity =             interpolate(transition, { inputRange: [0, 1], outputRange: [1, 0] });
-    // const scratchOpacity =           interpolate(transition, { inputRange: [0, 1], outputRange: [0, 1] });
-    // const playOpacity =              interpolate(transition, { inputRange: [0, 1], outputRange: [1, 0] });
-    // const playTranslateY =           interpolate(transition, { inputRange: [0, 1], outputRange: [0, height] });
+const Play = ({ route }) => {
+    const [isScratched, setIsScratched] = useState<boolean>(false);
+    const { ticket } = route.params;
+    const store = useTicketStore();
 
-    const [coins, setCoins] = useState(0);
-    const ticketCfg = navigation.getParam('ticket');
+    useEffect(() => {
+        const getIsReady = async () => {
+            try {
+                const adsIsReady = await isReady();
+                console.log('adsIsReady', adsIsReady)
+                if (!adsIsReady) {
+                    await requestAd();
+                }
 
-    // const { isReady, requestAd, state: rewardState, dispatch } = useRewardContext();
-    // useEffect(() => {
-    //     const getIsReady = async () => {
-    //         try {
-    //             const adsIsReady = await AdMobRewarded.getIsReadyAsync();
-
-    //             if (!adsIsReady) {
-    //                 await requestAd();
-    //             }
-
-    //         } catch (error) {
-    //             console.log('isreadyError', error)
-    //         }
-    //     }
-    //     getIsReady();
-
-    // }, []);
+            } catch (error) {
+                console.log('isreadyError', error)
+            }
+        }
+        getIsReady();
+    }, []);
 
     //
     // const [getTicket, { called, loading, data, refetch }] = useLazyQuery(GET_TICKET);
@@ -62,19 +56,20 @@ const Play = ({ navigation }) => {
     // }, [rewardState.isAdsVisible, rewardState.isReward])
 
     //
-    // const [isModalVisible, setIsModalVisible] = useState(false);
     // const showWinCoinModal = () => {
     //     setIsModalVisible(true);
     //     setTimeout(() => setIsModalVisible(false), 3000);
     // };
 
-    // const show = () => {
-    //     if (!rewardState.isAdsLoading) {
-    //         AdMobRewarded.showAdAsync().catch(error => console.warn(error));
-    //     }
-    // };
+    const play = () => {
+        if (!store.adsLoading) {
+            showAd()
+        }
+    };
 
-    // const close = () => navigation.goBack();
+    useEffect(() => {
+        console.log(store.adsLoading)
+    }, [store.adsLoading])
 
     // const afterScratching = (coins) => {
     //     setIsScratched(false);
@@ -93,54 +88,21 @@ const Play = ({ navigation }) => {
                         </Animated.View>
                     )
                 } */}
-                <SharedElement id={`item.${ticketCfg.id}.photo`}>
-                    <Image resizeMode="cover" style={styles.image} source={{uri: ticketCfg.image}} />
+                <SharedElement id={`item.${ticket.id}.image`}>
+                    <Image resizeMode="cover" style={styles.image} source={{uri: ticket.image}} />
                 </SharedElement>
-                    {/* <Animated.View 
-                        style={{
-                            ...styles.croixContainer,
-                            width: croixContainerWidth,
-                            transform: [
-                                {translateX: croixContainerTranslateX}
-                            ]
-                        }}
-                    >
-                        <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end'}} >
-                            <Animated.Text style={{...styles.textPlay, opacity: scratchOpacity, transform: [{translateX: 20}]}}>Scratch</Animated.Text>
-                            <TouchableOpacity onPress={close}>
-                                <Animated.View style={{marginRight: 10, opacity: croixOpacity, transform: [{translateX: croixTranslateX}]}}>
-                                    <Image style={styles.imageCroix} source={require('../../assets/images/croix.png')} />
-                                </Animated.View>
-                            </TouchableOpacity>
-                        </View>
-                    </Animated.View>
-                <Animated.View style={{...styles.buttonPlayContainer, opacity: playOpacity, transform: [{translateY: playTranslateY}]}}>
-                    {
-                        isModalVisible && (
-                            <View style={styles.winCointainer}>
-                                <Image style={styles.winImage} source={require('../../assets/images/win.png')} />
-                                <Text style={styles.winText}>You Win</Text>
-                                <Text style={styles.coinsText}>{coins}</Text>
-                            </View>
-                        )
-                    }
-                    
-                    <TouchableOpacity style={styles.buttonPlay} onPress={show}>
-                        <Text style={styles.textPlay}>Play</Text>
-                        {
-                            (rewardState.isAdsLoading || loading) && <Image style={styles.loader} source={require('../../assets/images/splash.gif')} />
-                        }
-                    </TouchableOpacity>
-                </Animated.View> */}
+                <CroixScratch isScratchable={isScratched} />
+                <PlayButton style={styles.buttonPlay} loading={store.adsLoading} onPress={play} isScratchable={isScratched}/>
             </View>
         </View>
     );
 };
 
-Play.sharedElements = (navigation, otherNavigation, showing) => {
-    const card = navigation.getParam('card');
-    return [`item.${card.id}.photo`];
-};
+Play.sharedElements = (route, otherRoute, showing) => {
+    const { ticket } = route.params;
+    console.log(route.params)
+    return [`item.${ticket.id}.image`];
+}
 
 export default Play;
 
@@ -155,45 +117,12 @@ const styles = StyleSheet.create({
         width,
         height
     },
-    croixContainer: {
-        ...StyleSheet.absoluteFillObject,
-        left: width - 50 - 30,
-        zIndex: 10,
-        top: 60,
-        height: 50,
-        backgroundColor: '#fff',
-        justifyContent: 'center',
-        alignItems: 'center',
-        borderRadius: 10,
-        overflow: 'hidden'
-    },
-    imageCroix: {
-        width: 30,
-        height: 30
-    },
-    buttonPlayContainer: {
+    buttonPlay: {
         ...StyleSheet.absoluteFillObject,
         zIndex: 10,
         top: height / 3 * 2,
         width: '100%',
         alignItems: 'center'
-    },
-    buttonPlay: {
-        width: 150,
-        height: 60,
-        justifyContent: 'center',
-        flexDirection: 'row',
-        alignItems: 'center',
-        backgroundColor: '#fff',
-        borderRadius: 10,
-        shadowColor: "#000",
-        shadowOffset: {
-            width: 0,
-            height: 12,
-        },
-        shadowOpacity: 0.58,
-        shadowRadius: 16.00,
-        elevation: 24,
     },
     textPlay: {
         fontSize: 36,

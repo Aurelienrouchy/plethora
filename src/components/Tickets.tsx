@@ -1,38 +1,41 @@
-import React, {
-    useState, useMemo, useContext, useEffect,
-} from 'react';
-import {
-    StyleSheet, View, Text, TouchableOpacity, Image, Dimensions, ScrollView,
-} from 'react-native';
-import Animated, { useAnimatedScrollHandler, useSharedValue } from 'react-native-reanimated';
-// import Animated, {
-//     event,
-//     sub,
-//     multiply,
-//     divide,
-//     interpolate,
-//     add,
-//     cond,
-//     eq,
-//     floor,
-// } from 'react-native-reanimated';
+import React from 'react';
+import { StyleSheet, View, Text, Dimensions } from 'react-native';
+import { FlatList, PanGestureHandler } from 'react-native-gesture-handler';
+import Animated, { useAnimatedGestureHandler, useSharedValue } from 'react-native-reanimated';
 
 import Ticket from '../components/Ticket';
 
-import { useAuthStore } from '../utils/store';
+import { useTicketStore } from '../utils/store';
 
 const { width, height } = Dimensions.get('screen');
 const WIDTH_RAFFLE = width / 1.8;
 const WIDTH_RAFFLE_MARGIN = WIDTH_RAFFLE + 10;
 
-export default function Tickets() {
-    const store = useAuthStore();
-    const x = useSharedValue(0)
+const OVERFLOW_HEIGHT = 70;
+const SPACING = 10;
+const ITEM_WIDTH = width * 0.76;
+const ITEM_HEIGHT = ITEM_WIDTH * 1.7;
+const VISIBLE_ITEMS = 3;
 
-    const onScroll = useAnimatedScrollHandler(
+export default function Tickets() {
+    const store = useTicketStore();
+    const scrollIndex = useSharedValue(0);
+
+    const handlerGesture = useAnimatedGestureHandler(
         {
-            onScroll: (event) => {
-                x.value = event.contentOffset.x;
+            onEnd: ({translationX}) => {
+                if (translationX > 50) {
+                    if (scrollIndex.value === 0) {
+                        return;
+                    }
+                    scrollIndex.value = scrollIndex.value - 1;
+                }
+                if (translationX < -50) {
+                    if (scrollIndex.value === store?.tickets.length - 1) {
+                        return;
+                    }
+                    scrollIndex.value = scrollIndex.value + 1;
+                }
             },
         },
     );
@@ -43,25 +46,41 @@ export default function Tickets() {
                 <Text style={styles.title}>Tickets</Text>
             </View>
             <View >
-                <Animated.ScrollView
-                    showsHorizontalScrollIndicator={false}
-                    snapToInterval={WIDTH_RAFFLE_MARGIN}
-                    decelerationRate="fast"
-                    scrollEventThrottle={16}
-                    horizontal
-                    onScroll={onScroll}
-                >
-                    {
-                        store?.user?.tickets.map((ticket, index) => (
-                            <Ticket
-                                key={ticket.id}
-                                index={index}
-                                x={x}
-                                card={ticket}
-                            />
-                        ))
-                    }
-                </Animated.ScrollView>
+                <PanGestureHandler onGestureEvent={handlerGesture} >
+                    <Animated.View style={styles.scrollview}>
+                        <FlatList
+                            data={store?.tickets}
+                            keyExtractor={(_, index) => String(index)}
+                            scrollEnabled={false}
+                            horizontal
+                            removeClippedSubviews={false}
+                            CellRendererComponent={({
+                                item,
+                                index,
+                                children,
+                                style,
+                                ...props
+                              }) => {
+                                const newStyle = [style, { zIndex: store?.tickets.length - index }];
+                                return (
+                                  <View style={newStyle} index={index} {...props}>
+                                    {children}
+                                  </View>
+                                );
+                            }}
+                            renderItem={({ item, index }) => {                                
+                                return (
+                                    <Ticket
+                                        key={item.id}
+                                        scrollXIndex={scrollIndex}                                        
+                                        index={index}
+                                        ticket={item}
+                                    />
+                                )
+                            }}
+                        />
+                    </Animated.View>
+                </PanGestureHandler>
             </View>
         </View>
     );
@@ -69,10 +88,14 @@ export default function Tickets() {
 
 const styles = StyleSheet.create({
     main: {
-        height: 250,
+        height: width / 1.8,
         marginTop: 30,
         marginBottom: 7,
-        width: width - 30
+        width: width - 30,
+    },
+    scrollview: {
+        position: 'relative',
+        height: '100%',
     },
     header: {
         height: 30,

@@ -4,8 +4,8 @@ import { View, StyleSheet, TouchableOpacity, Text, Image, Dimensions } from 'rea
 import Animated from 'react-native-reanimated';
 import { useDispatch } from 'react-redux';
 import { toggleDrawer } from '../provider/app/app.actions';
-import { signOut } from '../provider/auth/functions';
-import { useAuthStore } from '../utils/store';
+import { signOut } from '../provider/user/functions';
+import { useUserStore } from '../utils/store';
 import { drawerRoutesCfg } from './../utils/constants';
 
 const { width, height } = Dimensions.get('screen');
@@ -17,10 +17,9 @@ const Drawer = ({
 }: any) => {
     const dispatch = useDispatch();
     const navigation = useNavigation();
-    const authStore = useAuthStore()
+    const userStore = useUserStore()
 
     const navigate = (route: string) => {
-        console.log(route)
         setTimeout(() => navigation.navigate(route), 300);
         animation.value = animation.value ? 0 : 1;
         dispatch(toggleDrawer);
@@ -34,7 +33,7 @@ const Drawer = ({
     
     return (
         <View style={styles.main}>
-            <Image style={styles.photo} source={{uri: authStore?.user?.photoUrl }} />
+            <Image style={styles.photo} source={{uri: userStore?.photoUrl }} />
             <View style={styles.routes}>
                 {
                     drawerRoutesCfg.map((route, index) => (

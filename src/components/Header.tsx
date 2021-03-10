@@ -1,17 +1,15 @@
-import React, { useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, Dimensions } from 'react-native';
-import { Easing, useSharedValue, withSpring, withTiming } from 'react-native-reanimated';
+import React from 'react';
+import { View, StyleSheet, TouchableOpacity, Image, Dimensions } from 'react-native';
 import { useDispatch } from 'react-redux';
 import { toggleDrawer } from '../provider/app/app.actions';
-import { addCoins } from '../provider/auth/auth.actions';
-import { useAuthStore } from '../utils/store';
+import { useTicketStore } from '../utils/store';
 import AnimatedText from './AnimatedText';
 
 const { width, height } = Dimensions.get('screen');
 
 const Header = () => {
     const dispatch = useDispatch();
-    const store = useAuthStore();
+    const store = useTicketStore();
 
     const toggle = () => dispatch(toggleDrawer);
 
@@ -22,9 +20,9 @@ const Header = () => {
                     <Image style={styles.menu_image} source={require('../../assets/icons/menu-dots.png')} />
                 </TouchableOpacity>
                 <View style={styles.counters}>
-                    <AnimatedText start={0} end={store?.user?.coins} style={styles.counter} />
+                    <AnimatedText start={0} end={store?.coins} style={styles.counter} />
                     <Image style={styles.coinsIcon} source={require('../../assets/icons/coin.png')} />
-                    <AnimatedText start={0} end={store?.user?.trees} style={styles.counter} />
+                    <AnimatedText start={0} end={store?.trees} style={styles.counter} />
                     <Image style={styles.treesIcon} source={require('../../assets/icons/tree.png')} />
                 </View>
             </View>

@@ -4,15 +4,15 @@ import React, {
 import {
     StyleSheet, View, Animated, Text, TouchableOpacity, Image, Dimensions, ScrollView,
 } from 'react-native';
+import { useLotosStore } from '../utils/store';
 // import { useQuery } from '@apollo/react-hooks';
 
-import Raffle from './Raffle';
+import Loto from './Loto';
 // import { GET_RAFFLES } from '../graphql/queries.js';
-import { raffles } from '../utils/constants';
-
 const { width, height } = Dimensions.get('screen');
 
-export default function Raffles() {
+export default function Lotos() {
+    const store = useLotosStore();
     // const { loading, error, data, startPolling, stopPolling } = useQuery(GET_RAFFLES, {pollInterval: 5000 });
     // const [raffles, setRaffles] = useState([]);
 
@@ -31,18 +31,18 @@ export default function Raffles() {
     //     return stopPolling
     // }, [data]);
 
-    useEffect(() => {
-        if (raffles.length) {
-            Animated.stagger(
-                200,
-                raffles.map((raffle, index) => Animated.timing(raffle.translateY, {
-                    toValue: 0,
-                    duration: 500,
-                    useNativeDriver: true,
-                }))
-            ).start();
-        }
-    }, [raffles])
+    // useEffect(() => {
+    //     if (lotos.length) {
+    //         Animated.stagger(
+    //             200,
+    //             lotos.map((raffle, index) => Animated.timing(raffle.translateY, {
+    //                 toValue: 0,
+    //                 duration: 500,
+    //                 useNativeDriver: true,
+    //             }))
+    //         ).start();
+    //     }
+    // }, [lotos])
 
     return (
         <View style={styles.main}>
@@ -50,8 +50,8 @@ export default function Raffles() {
             <View style={styles.lotos}>
                 <ScrollView showsVerticalScrollIndicator={false} >
                     {
-                        raffles.map((raffle, key) => {
-                            return ( <Raffle {...{raffle, key}} /> )
+                        store.lotos.map((loto, key) => {
+                            return ( <Loto {...{loto, key}} /> )
                         })
                     }
                 </ScrollView>

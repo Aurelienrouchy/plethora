@@ -80,20 +80,13 @@ export const tickets = [{
     image: 'https://www.malikafavre.com/uploads/project_thumbnails/pageturner_thumb-mtime1465225529.png'
 }]
 
-const user = {
-    token: undefined,
-	lastname: undefined,
-    firstName: undefined,
-    photoUrl: undefined,
-    email: undefined,
-    provider: undefined,
+export const state = {
+    tickets,
     coins: 0,
     trees: 0,
-    tickets
+    adsIsVisible: false,
+    rewardIsVisible: false,
+    ticketIsVisible: false,
+    adsLoading: false,
+    isReward: false
 }
-
-export const state = {
-    isLogin: false,
-    user
-};
-

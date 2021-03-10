@@ -3,7 +3,8 @@ import React, { useContext, useMemo, useEffect } from 'react';
 import {
     StyleSheet, Image, TouchableOpacity, Text, Dimensions, View,
 } from 'react-native';
-import Animated, { Extrapolate, interpolate, useAnimatedStyle } from 'react-native-reanimated';
+import Animated, { Extrapolate, interpolate, useAnimatedStyle, withTiming } from 'react-native-reanimated';
+import { SharedElement } from 'react-navigation-shared-element';
 // import {
 //     SharedElement
 // } from 'react-navigation-shared-element';
@@ -13,7 +14,8 @@ const WIDTH_RAFFLE = width / 1.8;
 const WIDTH_RAFFLE_MARGIN = WIDTH_RAFFLE + 10;
 
 interface TicketProps {
-    card: {
+    ticket: {
+        id: number;
         level: number;
         minCoins: number;
         maxCoins: number;
@@ -21,54 +23,58 @@ interface TicketProps {
         scratchBeforeUnlock: number;
         image: string
     }
-    x: Animated.SharedValue<number>;
     index: number;
+    scrollXIndex: any;
 }
 
 const Ticket = ({
-    card,
+    ticket,
     index,
-    x
+    scrollXIndex
 }: TicketProps) => {
     const navigation = useNavigation();
-    const onClick = () => navigation.navigate('Play', { card });
-
+    const onClick = () => navigation.navigate('Play', { ticket });
+    const inputRange = [index - 1, index, index + 1];
     const style = useAnimatedStyle(() => ({
         transform: [{
-            scale: interpolate(
-                x.value,
-                [(index - 1) * WIDTH_RAFFLE_MARGIN, index * WIDTH_RAFFLE_MARGIN],
-                [0.8, 1],
-                Extrapolate.CLAMP
-            )
+            scale: withTiming(interpolate(
+                scrollXIndex.value,
+                inputRange,
+                [0.9, 1, 1.3],
+            )),
         }, {
-            translateX: interpolate(
-                x.value,
-                [(index - 1) * WIDTH_RAFFLE_MARGIN, index * WIDTH_RAFFLE_MARGIN],
-                [-10, 0],
-                Extrapolate.CLAMP
-            )
-        }]
+            translateX: withTiming(interpolate(
+                scrollXIndex.value,
+                inputRange,
+                [70, 0, -100],
+            )),
+        }],
+        opacity: withTiming(interpolate(
+                scrollXIndex.value,
+                inputRange,
+                [1 - 1 / 5, 1, 0],
+        )),
     }))
+
 
     return (
         <Animated.View style={[styles.main, style]} >
-            <TouchableOpacity style={styles.touch} onPress={ () => onClick() } >
-                {/* <SharedElement id={`item.${card.id}.photo`}> */}
-                    <Image style={styles.image} source={{uri: card.image}} />
-                {/* </SharedElement> */}
+            <TouchableOpacity style={styles.touch} disabled={ticket.locked} onPress={ () => onClick() } >
+                <SharedElement id={`item.${ticket.id}.image`}>
+                    <Image style={styles.image} source={{uri: ticket.image}} />
+                </SharedElement>
                 <View style={styles.infos_container}>
                     <View style={styles.min_max_container}>
-                        <Text style={styles.min_max}>{card?.minCoins} - {card?.maxCoins}</Text>
+                        <Text style={styles.min_max}>{ticket?.minCoins} - {ticket?.maxCoins}</Text>
                         <Image style={styles.coinsIcon} source={require('../../assets/icons/coin.png')} />
                     </View>
                     <View style={styles.progress_bar}>
                         <Animated.View style={styles.progress}></Animated.View>
                     </View>
                 </View>
-                <Text style={styles.level}>{card?.level}</Text>
+                <Text style={styles.level}>{ticket?.level}</Text>
                 {
-                    card.locked ? (
+                    ticket.locked ? (
                         <View style={styles.locked}>
                             <Text style={styles.locked_text}>locked</Text>
                         </View>
@@ -79,13 +85,18 @@ const Ticket = ({
     );
 };
 
+Ticket.sharedElements = (route, otherRoute, showing) => {
+    const { ticket } = route.params;
+    return [`item.${ticket.id}.photo`];;
+}
+
 export default Ticket;
 
 const styles = StyleSheet.create({
     main: {
+        ...StyleSheet.absoluteFillObject,
         width: WIDTH_RAFFLE,
         height: WIDTH_RAFFLE,
-        marginRight: 10,
         borderRadius: 20,
         overflow: 'hidden',
     },
@@ -94,8 +105,8 @@ const styles = StyleSheet.create({
         height: '100%',
     },
     image: {
-        width: '100%',
-        height: '100%',
+        width: WIDTH_RAFFLE,
+        height: WIDTH_RAFFLE,
         borderRadius: 20,
     },
     coinsIcon: {
@@ -142,7 +153,7 @@ const styles = StyleSheet.create({
     locked: {
         ...StyleSheet.absoluteFillObject,
         backgroundColor: '#000',
-        opacity: 0.6,
+        opacity: 0.5,
         justifyContent: 'center',
         alignItems: 'center',
     },

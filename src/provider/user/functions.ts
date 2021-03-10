@@ -7,8 +7,7 @@ import * as SecureStore from 'expo-secure-store';
 
 // import { AUTH, GET_USER_WITH_TOKEN } from '../graphql/queries';
 // import { Context } from '../hooks/use-context';
-import { store } from '../../utils/store';
-import { signIn } from './auth.actions';
+import { signIn } from './user.actions';
 
 const signWithGoogle = async () => {
     // const navigation = useNavigation();
@@ -32,7 +31,7 @@ const signWithGoogle = async () => {
                 coins: 0
             }
 
-            store.dispatch(signIn(user))
+            signIn(user)
             
             // const resultFromServer = await client.mutate({ mutation: AUTH, variables: { accessToken, provider: 'google' } });
         } else {

@@ -21,6 +21,7 @@ const images = [
 	require('./assets/icons/menu-dots.png'),
 	require('./assets/icons/tree.png'),
 	require('./assets/icons/coin.png'),
+	require('./assets/icons/croix.png'),
 ]
 
 export default function App() {

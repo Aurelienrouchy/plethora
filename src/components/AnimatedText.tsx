@@ -2,9 +2,6 @@ import * as React from 'react';
 import { StyleSheet, Text, TextInput } from 'react-native';
 import { useEffect, useState } from 'react';
 import Animated, { Easing, useAnimatedProps, useDerivedValue, useSharedValue, withTiming } from 'react-native-reanimated';
-import { useAuthStore } from '../utils/store';
-
-
 interface AnimatedTextProps {
     start?: number
     end?: number
@@ -12,10 +9,6 @@ interface AnimatedTextProps {
     duration?: number,
     style: any
 };
-
-function linear(t) {
-    return t
-}
 
 Animated.addWhitelistedNativeProps({ text: true });
 const AnimatedTextInput = Animated.createAnimatedComponent(TextInput);

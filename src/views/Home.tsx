@@ -1,78 +1,79 @@
-import { useNavigation } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Dimensions, ScrollView, Animated } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Dimensions, ScrollView } from 'react-native';
 import { useDispatch } from 'react-redux';
 import { toggleDrawer } from '../provider/app/app.actions';
 import { useAppStore } from '../utils/store';
 import Drawer from './Drawer';
 import Header from '../components/Header';
-import Raffles from '../components/Raffles';
-import { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
+import Lotos from '../components/Lotos';
+import Animated, { interpolate, runOnJS, useAnimatedGestureHandler, useAnimatedStyle, useDerivedValue, useSharedValue, withTiming } from 'react-native-reanimated';
 import { State, PanGestureHandler } from 'react-native-gesture-handler';
 import Tickets from '../components/Tickets';
+import { useTiming } from 'react-native-redash';
+import { addRewardListeners, removeRewardListener } from '../utils/ads';
 
 const { width, height } = Dimensions.get('screen');
-const {
-    timing,
-    parallel,
-    Value,
-    event
-} = Animated;
 
 interface HomeProps {}
 
 const Home = () => {
     const dispatch = useDispatch();
-    const navigation = useNavigation();
     const store = useAppStore();
+    const isOpen = useTiming(store.drawerIsOpen);
 
-    const [translateX, setTranslateX] = useState(new Value(0));
-    const [translateY, setTranslateY] = useState(new Value(0));
-    const [scale, setScale] = useState(new Value(1));
-    const [borderRadius, setBorderRadius] = useState(new Value(0));
+    const wrapper = () => {
+        dispatch(toggleDrawer)
+    }
 
-    const handleStateChange = ({ nativeEvent }) => {
-        if (store.drawerIsOpen) {
-            if (nativeEvent.state === State.END && nativeEvent.translationX < -(width / 3)) {
-                dispatch(toggleDrawer);
-            }
-        }
-    };
+    const handlerGesture = useAnimatedGestureHandler(
+        {
+            onEnd: ({translationX}) => {
+                if (store.drawerIsOpen) {
+                    if (translationX < -(width / 3)) {
+                        runOnJS(wrapper)();
+                    }
+                }
+            },
+        },
+    );
 
     useEffect(() => {
-        parallel([
-            timing(translateX, {
-                toValue: store.drawerIsOpen ? width - width / 2.5 : 0,
-                duration: 300,
-                useNativeDriver: true
-            }),
-            timing(translateY, {
-                toValue: store.drawerIsOpen ? 30 : 0,
-                duration: 300,
-                useNativeDriver: true
-            }),
-            timing(scale, {
-                toValue: store.drawerIsOpen ? 0.7 : 1,
-                duration: 300,
-                useNativeDriver: true
-            }),
-            timing(borderRadius, {
-                toValue: store.drawerIsOpen ? 40 : 0,
-                duration: 300,
-                useNativeDriver: true
-            })
-        ]).start(() => {
-        })
-        
-    }, [store.drawerIsOpen])
+        addRewardListeners()
+        return () => removeRewardListener()
+    }, [])
+
+    const style = useAnimatedStyle(() => ({
+        transform: [{
+            scale: interpolate(
+                isOpen.value,
+                [0, 1],
+                [1, 0.7]
+            ),
+        }, {
+            translateX: interpolate(
+                isOpen.value,
+                [0, 1],
+                [0, width - width / 2.5]
+            ),
+        }, {
+            translateY: interpolate(
+                isOpen.value,
+                [0, 1],
+                [0, 30]
+            )
+        }],
+        borderRadius: interpolate(
+            isOpen.value,
+            [0, 1],
+            [0, 40]
+        )
+    }))
 
     return (
-        <PanGestureHandler 
-            onHandlerStateChange={handleStateChange}
-        >
+        <PanGestureHandler onGestureEvent={handlerGesture} >
             <Animated.View style={styles.main}>
                 <Drawer />
-                <Animated.View style={[styles.home, {borderRadius, transform: [{translateX}, {translateY}, {scale}]}]}>
+                <Animated.View style={[styles.home, style ]}>
                     <Header />
                     {
                         store.drawerIsOpen ? (
@@ -82,7 +83,7 @@ const Home = () => {
                     <ScrollView showsVerticalScrollIndicator={false}>
                         <View style={styles.main}>
                             <Tickets />
-                            <Raffles />
+                            <Lotos />
                         </View>
                     </ScrollView>
                 </Animated.View>

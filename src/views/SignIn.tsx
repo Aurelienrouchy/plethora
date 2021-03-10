@@ -2,7 +2,7 @@ import React, { useReducer, useContext } from 'react';
 import {
     StyleSheet, View, TouchableOpacity, Text,
 } from 'react-native';
-import { signWithGoogle } from '../provider/auth/functions';
+import { signWithGoogle } from '../provider/user/functions';
 
  const SignIn = () => {
 
