@@ -1,17 +1,16 @@
-import React, {
-    useContext, useState, useEffect, useLayoutEffect
-} from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { StyleSheet, View, Text, TouchableOpacity, Image, Dimensions } from 'react-native';
 import Animated, { interpolate, useAnimatedStyle, useSharedValue, withTiming, withDelay } from 'react-native-reanimated';
 import { SharedElement } from 'react-navigation-shared-element';
 import LotoGrid from '../components/LotoGrid';
 import { selectXNumberInArray } from '../utils/math';
-import LotoNumber from '../components/LotoNumber';
 import LotoButtons from '../components/LotoButtons';
-import Timer from '../components/Timer';
 import LotoInfos from '../components/LotoInfos';
 import LotoTicketsHistory from '../components/LotoTicketsHistory';
+import { participate } from '../utils/loto';
+import { useLotosStore } from '../utils/store';
+import { showError } from '../utils/errors';
 
 const { width, height } = Dimensions.get('screen');
 
@@ -20,17 +19,13 @@ interface ChooseNumbersLotoProps {
 }
 
 const ChooseNumbersLoto = ({ route }: ChooseNumbersLotoProps) => {
+    const { id } = route.params;
+    const store = useLotosStore();
+    const loto = store.lotos.filter(lt => lt.id === id)[0];
     const navigation = useNavigation();
-    const { loto } = route.params;
+    
     const animation = useSharedValue<number>(0);
     const titleStyle = useAnimatedStyle(() => ({
-        // transform: [{
-        //     translateY: interpolate(
-        //         animation.value,
-        //         [0, 1],
-        //         [-50, 28]
-        //     )
-        // }],
         opacity: interpolate(
             animation.value,
             [0, 1],
@@ -61,8 +56,11 @@ const ChooseNumbersLoto = ({ route }: ChooseNumbersLotoProps) => {
     }
 
     const validate = () => {
-        setSelectedClassic(selectXNumberInArray(loto.lotoNumbers, loto.maxNumber));
-        setSelectedComplementary(selectXNumberInArray(loto.lotoComplementary, loto.maxComplementary));
+        if (selectedClassic.length < loto.maxNumber || selectedComplementary.length < loto.maxComplementary) {
+            showError('You need 5 starts')
+            return
+        }
+        participate(selectedClassic, loto.id)
     }
 
     return (
@@ -73,7 +71,7 @@ const ChooseNumbersLoto = ({ route }: ChooseNumbersLotoProps) => {
                 </TouchableOpacity>
                 <View style={styles.title}>
                    <SharedElement style={[styles.imageContainer]} id={`loto.${loto.id}.image`}>
-                        <Animated.Image resizeMode="cover" style={[styles.image]} source={loto.image} />
+                        <Animated.Image resizeMode="cover" style={[styles.image]} source={loto.imageUrl} />
                     </SharedElement>
                     <Animated.View style={[styles.mask, titleStyle]}>
                         <Text style={styles.titleText}>{ loto.title }</Text>

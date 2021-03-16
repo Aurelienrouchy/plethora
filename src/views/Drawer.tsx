@@ -24,12 +24,6 @@ const Drawer = ({
         animation.value = animation.value ? 0 : 1;
         dispatch(toggleDrawer);
     };
-
-    const logout = () => {
-        setTimeout(() => signOut(), 300);
-        animation.value = animation.value ? 0 : 1;
-        dispatch(toggleDrawer);
-    };
     
     return (
         <View style={styles.main}>
@@ -41,7 +35,7 @@ const Drawer = ({
                             key={index}
                             style={styles.route}
                             onPress={() => {
-                                if (route.name === 'Logout') logout();
+                                if (route.name === 'Logout') signOut();
                                 else navigate(route.name);
                             }}
                         >

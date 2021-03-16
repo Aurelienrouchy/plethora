@@ -1,10 +1,11 @@
 import React from 'react';
 import { Image, StyleSheet, Text, TouchableWithoutFeedback, View } from 'react-native';
 import { useSharedValue, withTiming } from 'react-native-reanimated';
+import { loto } from '../provider/lotos/lotos.types';
 import Timer from './Timer';
 
 interface LotoInfosProps {
-    loto: any;
+    loto: loto;
     style?: any;
 }
 
@@ -14,7 +15,7 @@ const LotoInfos = ({ loto, style }: LotoInfosProps) => {
     return (
         <View style={[styles.main, style]}>
             <View style={styles.cost}>
-                <Text style={styles.text}>{ loto.cost }</Text>
+                <Text style={styles.text}>{ loto?.cost }</Text>
                 <Image style={styles.coinsIcon} source={require('../../assets/icons/coin.png')} />
             </View>
             <TouchableWithoutFeedback
@@ -26,12 +27,12 @@ const LotoInfos = ({ loto, style }: LotoInfosProps) => {
                     style={styles.ticket}
                     pointerEvents="none"
                 >
-                        <Text style={styles.text}>{ loto.cost }</Text>
+                        <Text style={styles.text}>{ loto?.tickets.length }</Text>
                         <Image style={styles.ticketIcon} source={require('../../assets/icons/ticket.png')} />
 
                 </View>
             </TouchableWithoutFeedback>
-            <Timer step={loto.timer} />
+            <Timer step={loto?.timer} />
             
         </View>
     );
@@ -63,11 +64,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
-        borderWidth: 2,
-        borderColor: '#ffd68c',
         paddingHorizontal: 10,
-        height: 50,
-        borderRadius: 10
     },
     ticketIcon: {
         width: 22,

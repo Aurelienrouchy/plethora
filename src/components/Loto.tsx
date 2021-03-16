@@ -2,16 +2,22 @@ import { useNavigation } from '@react-navigation/native';
 import React from 'react';
 import { StyleSheet, View, TouchableOpacity, Image } from 'react-native';
 import { SharedElement } from 'react-navigation-shared-element';
+import { loto } from '../provider/lotos/lotos.types';
 import LotoInfos from './LotoInfos';
-const Loto = ({ loto }: any) => {
+
+interface LotoProps {
+    loto: loto
+}
+
+const Loto = ({ loto }: LotoProps) => {
     const navigation = useNavigation();
 
-    const onClick = () => navigation.navigate('ChooseNumbersLoto', { loto });
+    const onClick = () => navigation.navigate('ChooseNumbersLoto', { loto, id: loto.id });
 
     return (
         <View style={[styles.main]}>
             <TouchableOpacity style={styles.touch} onPress={ () => onClick() } >
-                <SharedElement style={styles.imageContainer} id={`loto.${loto.id}.image`}>
+                <SharedElement style={styles.imageContainer} id={`loto.${loto?.id}.image`}>
                     <Image resizeMode="cover" style={[styles.imageContainer, styles.image]} source={loto?.imageUrl} />
                 </SharedElement>
                 <LotoInfos loto={loto} style={styles.infos}/>
@@ -51,7 +57,6 @@ const styles = StyleSheet.create({
         },
         shadowOpacity: 0.34,
         shadowRadius: 6.27,
-        elevation: 10,
         zIndex: 2
     },
     image: {

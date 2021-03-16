@@ -1,15 +1,9 @@
-import React, {
-    useContext, useState, useEffect, useMemo, useRef,
-} from 'react';
-import {
-    StyleSheet, View, Text, TouchableOpacity, Dimensions, Image, Button, ViewStyle, StyleProp
-} from 'react-native';
+import React from 'react';
+import { StyleSheet, TouchableOpacity, ViewStyle, StyleProp } from 'react-native';
 import Animated, { useAnimatedStyle, interpolate } from 'react-native-reanimated';
-import { useNavigation } from '@react-navigation/native';
 import { useTiming } from 'react-native-redash';
 
-import LottieView from 'lottie-react-native';
-
+import LoadingTextButton from './LoadingTextButton';
 interface PlayButtonProps {
     style: StyleProp<ViewStyle>;
     loading: boolean;
@@ -19,8 +13,6 @@ interface PlayButtonProps {
 
 const PlayButton = ({ style, loading, onPress, isScratchable }: PlayButtonProps) => {
     const animation = useTiming(isScratchable);
-    const isLoading = useTiming(loading);
-    const lottie = useRef(null);
     const mainStyle = useAnimatedStyle(() => ({
         opacity: interpolate(
             animation.value,
@@ -35,51 +27,11 @@ const PlayButton = ({ style, loading, onPress, isScratchable }: PlayButtonProps)
             ),
         }]
     }))
-    const textStyle = useAnimatedStyle(() => ({
-        opacity: interpolate(
-            isLoading.value,
-            [0, 1],
-            [1, 0]
-        ),
-        transform: [{
-            translateY: interpolate(
-                isLoading.value,
-                [0, 1],
-                [27, -30]
-            ),
-        }]
-    }))
-    const lottieStyle = useAnimatedStyle(() => ({
-        opacity: interpolate(
-            isLoading.value,
-            [0, 1],
-            [0, 1]
-        ),
-        transform: [{
-            translateY: interpolate(
-                isLoading.value,
-                [0, 1],
-                [0, -55]
-            ),
-        }]
-    }))
-
-    useEffect(() => {
-        lottie.current.play()
-    })
 
     return (
         <Animated.View style={[style, mainStyle]}>
             <TouchableOpacity style={styles.button} onPress={onPress}>
-                <Animated.Text style={[styles.text, textStyle]}>Play</Animated.Text>
-                <Animated.View style={[styles.loader, lottieStyle]}>
-                    <LottieView
-                        ref={lottie}
-                        style={[styles.lottie]}
-                        source={require('../../assets/icons/lottie_play.json')}
-                    />
-                </Animated.View>
-                
+                <LoadingTextButton loading={loading} text="Play" style={styles.text} />
             </TouchableOpacity>
         </Animated.View>
     );

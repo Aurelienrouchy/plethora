@@ -8,7 +8,7 @@ export type UserType = {
     lastname: string | undefined;
     photoUrl: string | undefined;
     email: string | undefined;
-    provider: string | undefined;
+    provider: 'google' | 'facebook' | string;
 }
 
 export interface UserStateType {

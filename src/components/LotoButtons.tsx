@@ -1,5 +1,8 @@
 import React from 'react';
 import { Dimensions, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { loto } from '../provider/lotos/lotos.types';
+import { store, useLotosStore } from '../utils/store';
+import LoadingTextButton from './LoadingTextButton';
 
 const { width, height } = Dimensions.get('screen');
 
@@ -9,6 +12,7 @@ interface LotoButtonsProps {
 }
 
 const LotoButtons = ({ onPressRandom, onPressValidate}: LotoButtonsProps) => {
+    const store = useLotosStore();
     return (
         <View style={styles.main}>
             <TouchableOpacity style={[styles.button, styles.buttonRandom]} onPress={onPressRandom}>
@@ -16,7 +20,7 @@ const LotoButtons = ({ onPressRandom, onPressValidate}: LotoButtonsProps) => {
                 <Text style={styles.text}>Random</Text>
             </TouchableOpacity>
             <TouchableOpacity style={[styles.button, styles.buttonValidate]} onPress={onPressValidate}>
-                <Text style={styles.text}>Validate</Text>
+                <LoadingTextButton loading={store.loading} text="Validate" style={styles.text} />
             </TouchableOpacity>
         </View>
     );

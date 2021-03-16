@@ -1,5 +1,5 @@
 import React from 'react';
-import { Animated } from 'react-native';
+import { Animated, View } from 'react-native';
 import { enableScreens } from 'react-native-screens'
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator, StackCardInterpolationProps } from '@react-navigation/stack';
@@ -12,6 +12,7 @@ import Header from '../components/Header';
 import Play from '../views/Play';
 import { createSharedElementStackNavigator } from 'react-navigation-shared-element';
 import ChooseNumbersLoto from '../views/LotoGridView';
+import ErrorDisplay from '../components/ErrorDisplay';
 
 enableScreens();
 // const { cond, multiply, interpolate } = Animated;
@@ -67,21 +68,24 @@ const Router = () => {
     const store = useUserStore();
 
     return (
-        <NavigationContainer>
-            <Stack.Navigator headerMode="none" >
-            { store.isLogin ? (
-                <Stack.Screen name="HomeRoutes" component={HomeRoutes} />
-            ) : (
-                <Stack.Screen
-                    name="SignIn"
-                    component={SignIn}
-                    options={{
-                        animationTypeForReplace: store.isLogin ? 'pop' : 'push',
-                    }}
-                />
-            )}
-            </Stack.Navigator>
-        </NavigationContainer>
+        <View style={{flex: 1}}>
+            <ErrorDisplay />
+            <NavigationContainer>
+                <Stack.Navigator headerMode="none" >
+                { store.isLogin ? (
+                    <Stack.Screen name="HomeRoutes" component={HomeRoutes} />
+                ) : (
+                    <Stack.Screen
+                        name="SignIn"
+                        component={SignIn}
+                        options={{
+                            animationTypeForReplace: store.isLogin ? 'pop' : 'push',
+                        }}
+                    />
+                )}
+                </Stack.Navigator>
+            </NavigationContainer>
+        </View>
     );
 }
 

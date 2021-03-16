@@ -4,7 +4,8 @@ import {
     ActionsType,
     ADD_LOTO_GRID,
     RESET_LOTOS,
-    SETUP_LOTOS
+    SETUP_LOTOS,
+    SET_LOTO_LOADING
 } from './lotos.types';
 
 export const LotosReducer = (state: LotosStateType = initialState, action: ActionsType) => {
@@ -19,6 +20,7 @@ export const LotosReducer = (state: LotosStateType = initialState, action: Actio
                         tickets: [...lt.tickets, numbers]
                     }
                 }
+                return lt
             })
             return {
                 ...state,
@@ -36,6 +38,12 @@ export const LotosReducer = (state: LotosStateType = initialState, action: Actio
             return {
                 ...state,
                 lotos: action.lotos
+            }
+        }
+        case SET_LOTO_LOADING: {
+            return {
+                ...state,
+                loading: action.payload
             }
         }
         default:

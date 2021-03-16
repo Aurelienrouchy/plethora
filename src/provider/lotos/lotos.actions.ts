@@ -1,11 +1,12 @@
 import {
 	ADD_LOTO_GRID,
 	RESET_LOTOS,
+	SET_LOTO_LOADING,
 	loto
 } from './lotos.types';
 import { store } from './../../utils/store';
 
-export const add_loto_grid = (numbers: number[], id: number) => store.dispatch({
+export const addLotoGrid = (numbers: number[], id: number) => store.dispatch({
 	type: ADD_LOTO_GRID,
 	payload: {
 		id,
@@ -13,11 +14,16 @@ export const add_loto_grid = (numbers: number[], id: number) => store.dispatch({
 	}
 })
 
-export const setup_lotos = (lotos: loto[]) => store.dispatch({
+export const setupLotos = (lotos: loto[]) => store.dispatch({
 	type: ADD_LOTO_GRID,
 	lotos
 })
 
-export const reset_lotos = () => store.dispatch({
+export const setLotoLoading = (loading: boolean) => store.dispatch({
+	type: SET_LOTO_LOADING,
+	payload: loading
+})
+
+export const resetLotos = () => store.dispatch({
 	type: RESET_LOTOS
 })

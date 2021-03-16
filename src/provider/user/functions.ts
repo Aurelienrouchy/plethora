@@ -8,11 +8,13 @@ import * as SecureStore from 'expo-secure-store';
 // import { AUTH, GET_USER_WITH_TOKEN } from '../graphql/queries';
 // import { Context } from '../hooks/use-context';
 import { signIn } from './user.actions';
+import { UserType } from './user.types';
+
+const getUserOrRegister = async (user: UserType) => {
+
+}
 
 const signWithGoogle = async () => {
-    // const navigation = useNavigation();
-    // const client = useApolloClient();
-
     try {
         const res = await Google.logInAsync({
             iosClientId: '108595256943-qq5i3mc7cn5u10ghoflb9hp9n3os10oc.apps.googleusercontent.com',
@@ -27,13 +29,13 @@ const signWithGoogle = async () => {
                 lastname: res.user.familyName,
                 photoUrl: res.user.photoUrl,
                 email: res.user.email,
-                provider: 'google',
-                coins: 0
+                provider: 'google'
             }
 
-            signIn(user)
+            const userFromServer = await getUserOrRegister(user)
+
+            signIn(userFromServer)
             
-            // const resultFromServer = await client.mutate({ mutation: AUTH, variables: { accessToken, provider: 'google' } });
         } else {
             throw new Error('No user found')
         }
@@ -58,16 +60,7 @@ const signWithFacebook = async () => {
 }
 
 const signOut = async () => {
-    // const navigation = useNavigation();
-    // const { dispatch, state } = useContext(Context);
-
-    // try {
-    //     dispatch({type: 'SIGN_OUT'});
-    //     await SecureStore.deleteItemAsync('token');
-    //     navigation.navigate('Auth');
-    // } catch (err) {
-    //     throw Error(err);
-    // }
+    
 };
 
 const getUser = async () => {
