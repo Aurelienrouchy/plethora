@@ -37,11 +37,6 @@ const Home = () => {
         },
     );
 
-    useEffect(() => {
-        addRewardListeners()
-        return () => removeRewardListener()
-    }, [])
-
     const style = useAnimatedStyle(() => ({
         transform: [{
             scale: interpolate(

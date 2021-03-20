@@ -1,14 +1,17 @@
 {
     "expo": {
       "name": "plethoria",
+      "version": "1.0.0",
       "android": {
+        "versionCode": 1,
+        "package": "com.plethoria",
         "config": {
-          "googleMobileAdsAppId": "ca-app-pub-3940256099942544/5224354917"
+          "googleMobileAdsAppId": "ca-app-pub-1586751755244367~8944629991"
         }
       },
       "ios": {
         "config": {
-          "googleMobileAdsAppId": "ca-app-pub-3940256099942544/5224354917"
+          "googleMobileAdsAppId": "ca-app-pub-1586751755244367~8944629991"
         }
       }
     }

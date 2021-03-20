@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js" integrity="sha512-d9xgZrVZpmmQlfonhQUvTR7lMPtO7NkZMkA0ABN3PHCbKA5nqylQ/yWlFAyY6hYgdF1Qh6nYiuADWwKB4C2WSw==" crossorigin="anonymous"></script>
+    <canvas id="myChart" width="400" height="200"></canvas>
+<script>
+var ctx = document.getElementById('myChart').getContext('2d');
+
+function getRandomArbitrary(min, max) {
+  return Math.random() * (max - min) + min;
+}
+
+const r =  () => {
+    const p = getRandomArbitrary(10, 1000);
+    const q = getRandomArbitrary(100, 10000);
+
+    let hp = p * q / 10;
+
+    return hp
+
+}
+
+const data = [];
+const bg = [];
+
+for (let i = 0; i < 1000; i++) {
+    const rt = r()
+    data.push(Math.floor(rt / 10000))
+    bg.push(Math.floor(rt / 10000))
+}
+
+data.sort((a, b) => a - b)
+bg.sort((a, b) => b - a)
+
+var myChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: bg,
+        datasets: [{
+            label: 'Pct of chance to win coins',
+            data,
+            backgroundColor: bg,
+            borderColor: bg,
+            borderWidth: 1
+        }]
+    },
+    options: {
+        scales: {
+            yAxes: [{
+                ticks: {
+                    beginAtZero: true
+                }
+            }]
+        }
+    }
+});
+</script>
+</body>
+</html>

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useLayoutEffect } from 'react';
 import { Animated, View } from 'react-native';
 import { enableScreens } from 'react-native-screens'
 import { NavigationContainer } from '@react-navigation/native';
@@ -13,10 +13,12 @@ import Play from '../views/Play';
 import { createSharedElementStackNavigator } from 'react-navigation-shared-element';
 import ChooseNumbersLoto from '../views/LotoGridView';
 import ErrorDisplay from '../components/ErrorDisplay';
+import { removeRewardListener, setupAds } from '../utils/ads';
+import { AdMobRewarded } from 'expo-ads-admob';
+import { setAdsLoading } from '../provider/tickets/tickets.action';
 
 enableScreens();
-// const { cond, multiply, interpolate } = Animated;
-
+  
 const Stack = createStackNavigator();
 const HomeStackShared = createSharedElementStackNavigator();
 

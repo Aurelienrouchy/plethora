@@ -71,7 +71,6 @@ const styles = StyleSheet.create({
     main: {
         ...StyleSheet.absoluteFillObject,
         left: width - 50 - 30,
-        zIndex: 10,
         top: 60,
         height: 50,
         backgroundColor: '#fff',

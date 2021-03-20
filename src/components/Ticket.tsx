@@ -74,7 +74,7 @@ const Ticket = ({
                 </View>
                 <Text style={styles.level}>{ticket?.level}</Text>
                 {
-                    ticket.locked ? (
+                    true ? (
                         <View style={styles.locked}>
                             <Text style={styles.locked_text}>locked</Text>
                         </View>

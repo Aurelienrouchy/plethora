@@ -3,8 +3,11 @@ import {
     ADD_TREES,
     SET_ADS_VISIBLE,
     SET_REWARD_VISIBLE,
-    SET_TICKET_VISIBLE,
+    SET_SCRATCH_VISIBLE,
     SET_ADS_LOADING,
+	Tickets,
+	SET_TICKETS,
+	SET_IS_REWARD,
 } from './tickets.types';
 import { store } from '../../utils/store';
 
@@ -18,6 +21,11 @@ export const addTrees = (trees: number) => store.dispatch({
 	trees
 })
 
+export const setTickets = (tickets: Tickets[]) => store.dispatch({
+	type: SET_TICKETS,
+	tickets
+})
+
 export const setAdsVisible = (isVisible: boolean) => store.dispatch({
 	type: SET_ADS_VISIBLE,
 	payload: isVisible
@@ -28,12 +36,17 @@ export const setRewardVisible = (isVisible: boolean) => store.dispatch({
 	payload: isVisible
 })
 
-export const setTicketVisible = (isVisible: boolean) => store.dispatch({
-	type: SET_TICKET_VISIBLE,
+export const setScratchVisible = (isVisible: boolean) => store.dispatch({
+	type: SET_SCRATCH_VISIBLE,
 	payload: isVisible
 })
 
 export const setAdsLoading = (loading: boolean) => store.dispatch({
 	type: SET_ADS_LOADING,
+	payload: loading
+})
+
+export const setIsReward = (loading: boolean) => store.dispatch({
+	type: SET_IS_REWARD,
 	payload: loading
 })

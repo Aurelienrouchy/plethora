@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { StyleSheet, View, Text, Dimensions } from 'react-native';
 import { FlatList, PanGestureHandler } from 'react-native-gesture-handler';
 import Animated, { useAnimatedGestureHandler, useSharedValue } from 'react-native-reanimated';
@@ -8,14 +8,6 @@ import Ticket from '../components/Ticket';
 import { useTicketStore } from '../utils/store';
 
 const { width, height } = Dimensions.get('screen');
-const WIDTH_RAFFLE = width / 1.8;
-const WIDTH_RAFFLE_MARGIN = WIDTH_RAFFLE + 10;
-
-const OVERFLOW_HEIGHT = 70;
-const SPACING = 10;
-const ITEM_WIDTH = width * 0.76;
-const ITEM_HEIGHT = ITEM_WIDTH * 1.7;
-const VISIBLE_ITEMS = 3;
 
 export default function Tickets() {
     const store = useTicketStore();
@@ -39,7 +31,7 @@ export default function Tickets() {
             },
         },
     );
-
+    
     return (
         <View style={styles.main}>
             <View style={styles.header}>
@@ -49,7 +41,7 @@ export default function Tickets() {
                 <PanGestureHandler onGestureEvent={handlerGesture} >
                     <Animated.View style={styles.scrollview}>
                         <FlatList
-                            data={store?.tickets}
+                            data={store.tickets}
                             keyExtractor={(_, index) => String(index)}
                             scrollEnabled={false}
                             horizontal
@@ -61,7 +53,7 @@ export default function Tickets() {
                                 style,
                                 ...props
                               }) => {
-                                const newStyle = [style, { zIndex: store?.tickets.length - index }];
+                                const newStyle = [style, { zIndex: store.tickets.length - index }];
                                 return (
                                   <View style={newStyle} index={index} {...props}>
                                     {children}

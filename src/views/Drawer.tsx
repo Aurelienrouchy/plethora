@@ -4,7 +4,7 @@ import { View, StyleSheet, TouchableOpacity, Text, Image, Dimensions } from 'rea
 import Animated from 'react-native-reanimated';
 import { useDispatch } from 'react-redux';
 import { toggleDrawer } from '../provider/app/app.actions';
-import { signOut } from '../provider/user/functions';
+import { signOut } from '../provider/user/user.actions';
 import { useUserStore } from '../utils/store';
 import { drawerRoutesCfg } from './../utils/constants';
 

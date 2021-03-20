@@ -20,31 +20,34 @@ import CroixScratch from '../components/CroixScratch';
 import PlayButton from '../components/PlayButton';
 import { useTicketStore } from '../utils/store';
 import { isReady, requestAd, showAd } from '../utils/ads';
+import Scratch from '../components/Scratch';
+import { showError } from '../utils/errors';
+import { Tickets } from '../provider/tickets/tickets.types';
+import { setScratchVisible } from '../provider/tickets/tickets.action';
 
 const { width, height } = Dimensions.get('screen');
 
 const Play = ({ route }) => {
     const [isScratched, setIsScratched] = useState<boolean>(false);
-    const { ticket } = route.params;
+    const ticket: Tickets = route.params.ticket
     const store = useTicketStore();
 
     useEffect(() => {
         const getIsReady = async () => {
             try {
                 const adsIsReady = await isReady();
-                console.log('adsIsReady', adsIsReady)
+
                 if (!adsIsReady) {
                     await requestAd();
                 }
-
             } catch (error) {
-                console.log('isreadyError', error)
+                showError('Ads loading problem')
             }
         }
         getIsReady();
     }, []);
 
-    //
+    
     // const [getTicket, { called, loading, data, refetch }] = useLazyQuery(GET_TICKET);
     // const { dispatch: dispatchMain, state: MainState } = useContext(Context); 
     // useEffect(() => {
@@ -67,27 +70,23 @@ const Play = ({ route }) => {
         }
     };
 
-    useEffect(() => {
-        console.log(store.adsLoading)
-    }, [store.adsLoading])
-
-    // const afterScratching = (coins) => {
-    //     setIsScratched(false);
-    //     setCoins(coins);
-    //     dispatchMain({type: 'UPADATE_COINS', coins})
-    //     showWinCoinModal();
-    // };
+    const onFinishScratch = (coins) => {
+        setScratchVisible(false);
+        // setCoins(coins);
+        // dispatchMain({type: 'UPADATE_COINS', coins})
+        // showWinCoinModal();
+    };
 
     return (
         <View style={styles.container}>
             <View style={styles.main}>
-                {/* {
-                    isScratched && (
-                        <Animated.View style={{zIndex: 9, opacity: scratchOpacity}}>
-                            <Scratch {...{data, card, afterScratching}} />
+                {
+                    store.scratchIsVisible ? (
+                        <Animated.View style={styles.scratch} >
+                            <Scratch ticket={ticket} onFinish={onFinishScratch}/>
                         </Animated.View>
-                    )
-                } */}
+                    ) : null
+                }
                 <SharedElement id={`item.${ticket.id}.image`}>
                     <Image resizeMode="cover" style={styles.image} source={{uri: ticket.image}} />
                 </SharedElement>
@@ -100,7 +99,6 @@ const Play = ({ route }) => {
 
 Play.sharedElements = (route, otherRoute, showing) => {
     const { ticket } = route.params;
-    console.log(route.params)
     return [`item.${ticket.id}.image`];
 }
 
@@ -119,7 +117,6 @@ const styles = StyleSheet.create({
     },
     buttonPlay: {
         ...StyleSheet.absoluteFillObject,
-        zIndex: 10,
         top: height / 3 * 2,
         width: '100%',
         alignItems: 'center'
@@ -180,5 +177,11 @@ const styles = StyleSheet.create({
         },
         shadowOpacity: 0.58,
         shadowRadius: 6.00,
+    },
+    scratch: {
+        ...StyleSheet.absoluteFillObject,
+        width,
+        height,
+        zIndex: 1,
     }
 });

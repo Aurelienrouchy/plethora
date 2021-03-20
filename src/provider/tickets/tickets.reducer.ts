@@ -6,8 +6,10 @@ import {
     ADD_TREES,
     SET_ADS_VISIBLE,
     SET_REWARD_VISIBLE,
-    SET_TICKET_VISIBLE,
+    SET_SCRATCH_VISIBLE,
     SET_ADS_LOADING,
+    SET_TICKETS,
+    SET_IS_REWARD
 } from './tickets.types';
 
 export const TicketsReducer = (state: TicketsStateType = initialState, action: ActionsType) => {
@@ -26,21 +28,31 @@ export const TicketsReducer = (state: TicketsStateType = initialState, action: A
             return {
                 ...state,
                 adsIsVisible: action.payload
+            };     
+        case SET_TICKETS:
+            return {
+                ...state,
+                tickets: action.tickets
             };    
         case SET_REWARD_VISIBLE:
             return {
                 ...state,
                 rewardIsVisible: action.payload
             };    
-        case SET_TICKET_VISIBLE:
+        case SET_SCRATCH_VISIBLE:
             return {
                 ...state,
-                ticketIsVisible: action.payload
+                scratchIsVisible: action.payload
             };    
         case SET_ADS_LOADING:
             return {
                 ...state,
                 adsLoading: action.payload
+            };  
+        case SET_IS_REWARD:
+            return {
+                ...state,
+                isReward: action.payload
             };
         default:
           return state
