@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useLayoutEffect, useRef } from 'react';
 import { StyleSheet, View, TouchableOpacity, Text, Dimensions} from 'react-native';
 import LottieView from 'lottie-react-native';
 import { signIn } from '../provider/user/user.actions';
@@ -28,7 +28,7 @@ const { width, height } = Dimensions.get('screen');
         }]
     }))
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         animation.value = withTiming(animation.value ? 0 : 1)
     }, [store.loading])
 
@@ -88,7 +88,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         width: 100,
         height: 100,
-        top: height / 3 - 30,
+        top: height / 3 - 130,
         left: width / 2 - 50,
         borderRadius: 20
     }

@@ -3,11 +3,9 @@ import React, { useContext, useMemo, useEffect } from 'react';
 import {
     StyleSheet, Image, TouchableOpacity, Text, Dimensions, View,
 } from 'react-native';
-import Animated, { Extrapolate, interpolate, useAnimatedStyle, withTiming } from 'react-native-reanimated';
+import Animated, { interpolate, useAnimatedStyle, withTiming } from 'react-native-reanimated';
 import { SharedElement } from 'react-navigation-shared-element';
-// import {
-//     SharedElement
-// } from 'react-navigation-shared-element';
+import { useTicketStore } from '../utils/store';
 
 const { width, height } = Dimensions.get('screen');
 const WIDTH_RAFFLE = width / 1.8;
@@ -20,21 +18,22 @@ interface TicketProps {
         minCoins: number;
         maxCoins: number;
         locked: boolean
-        scratchBeforeUnlock: number;
-        image: string
+        scratchableBeforeUnlock: number;
+        image: string;
+        progressColor: string;
     }
     index: number;
     scrollXIndex: any;
+    nextExp: number;
 }
 
-const Ticket = ({
-    ticket,
-    index,
-    scrollXIndex
-}: TicketProps) => {
+const Ticket = ({ ticket, index, scrollXIndex, nextExp}: TicketProps) => {
     const navigation = useNavigation();
+    const store = useTicketStore();
+    
     const onClick = () => navigation.navigate('Play', { ticket });
     const inputRange = [index - 1, index, index + 1];
+    const isLocked = ticket.scratchableBeforeUnlock > store.experiences;
     const style = useAnimatedStyle(() => ({
         transform: [{
             scale: withTiming(interpolate(
@@ -46,20 +45,24 @@ const Ticket = ({
             translateX: withTiming(interpolate(
                 scrollXIndex.value,
                 inputRange,
-                [70, 0, -100],
+                [70, 0, -WIDTH_RAFFLE],
             )),
         }],
         opacity: withTiming(interpolate(
                 scrollXIndex.value,
                 inputRange,
-                [1 - 1 / 5, 1, 0],
+                [1 - 1 / 5, 1, 1],
         )),
     }))
 
+    const pctExp = (store.experiences - ticket.scratchableBeforeUnlock) / (nextExp - ticket.scratchableBeforeUnlock) * 100;
+    
+    const pct = pctExp > 100 ? 100 : pctExp < 0 ? 0 : pctExp;
+
 
     return (
-        <Animated.View style={[styles.main, style]} >
-            <TouchableOpacity style={styles.touch} disabled={ticket.locked} onPress={ () => onClick() } >
+        <Animated.View style={[{backgroundColor: ticket.progressColor}, styles.main, style]} >
+            <TouchableOpacity style={styles.touch} onPress={ () => onClick() } >
                 <SharedElement id={`item.${ticket.id}.image`}>
                     <Image style={styles.image} source={{uri: ticket.image}} />
                 </SharedElement>
@@ -68,13 +71,13 @@ const Ticket = ({
                         <Text style={styles.min_max}>{ticket?.minCoins} - {ticket?.maxCoins}</Text>
                         <Image style={styles.coinsIcon} source={require('../../assets/icons/coin.png')} />
                     </View>
-                    <View style={styles.progress_bar}>
-                        <Animated.View style={styles.progress}></Animated.View>
+                    <View style={[{borderColor: ticket.progressColor}, styles.progress_bar]}>
+                        <Animated.View style={[{backgroundColor: ticket.progressColor, width: `${pct}%`}, styles.progress]}></Animated.View>
                     </View>
                 </View>
                 <Text style={styles.level}>{ticket?.level}</Text>
                 {
-                    true ? (
+                    isLocked ? (
                         <View style={styles.locked}>
                             <Text style={styles.locked_text}>locked</Text>
                         </View>
@@ -123,6 +126,7 @@ const styles = StyleSheet.create({
         height: 70,
         ...StyleSheet.absoluteFillObject,
         left: 4,
+        zIndex: 1,
         top: WIDTH_RAFFLE - 70 - 4,
         borderRadius: 16,
     },
@@ -138,10 +142,11 @@ const styles = StyleSheet.create({
         height: 15,
         borderRadius: 5,
         borderWidth: 1,
+        overflow: 'hidden',
     },
     progress: {
         height: 15,
-        // backgroundColor: 'red'
+        borderRadius: 5,
     },
     level: {
         ...StyleSheet.absoluteFillObject,

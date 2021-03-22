@@ -8,6 +8,7 @@ import Ticket from '../components/Ticket';
 import { useTicketStore } from '../utils/store';
 
 const { width, height } = Dimensions.get('screen');
+const WIDTH_RAFFLE = width / 1.8;
 
 export default function Tickets() {
     const store = useTicketStore();
@@ -38,13 +39,29 @@ export default function Tickets() {
                 <Text style={styles.title}>Tickets</Text>
             </View>
             <View >
-                <PanGestureHandler onGestureEvent={handlerGesture} >
+                <PanGestureHandler  onGestureEvent={handlerGesture} >
                     <Animated.View style={styles.scrollview}>
-                        <FlatList
+                    {
+                        store.tickets.map((tiket, index) => {
+                            return (
+                                <View style={[styles.items, {zIndex: store.tickets.length - index }]}>
+                                    <Ticket
+                                        key={tiket.id}
+                                        scrollXIndex={scrollIndex}                                        
+                                        index={index}
+                                        ticket={tiket}
+                                        nextExp={store.tickets[index + 1]?.scratchableBeforeUnlock || 0}
+                                    />
+                                </View>
+                            )
+                        })
+                    }
+                        {/* <FlatList
                             data={store.tickets}
                             keyExtractor={(_, index) => String(index)}
                             scrollEnabled={false}
                             horizontal
+                            contentContainerStyle={{ flex: 1 }}
                             removeClippedSubviews={false}
                             CellRendererComponent={({
                                 item,
@@ -53,24 +70,27 @@ export default function Tickets() {
                                 style,
                                 ...props
                               }) => {
-                                const newStyle = [style, { zIndex: store.tickets.length - index }];
+                                const newStyle = [style, {zIndex: store.tickets.length - index }];
                                 return (
                                   <View style={newStyle} index={index} {...props}>
                                     {children}
                                   </View>
                                 );
                             }}
-                            renderItem={({ item, index }) => {                                
+                            renderItem={({ item, index }) => {
                                 return (
-                                    <Ticket
-                                        key={item.id}
-                                        scrollXIndex={scrollIndex}                                        
-                                        index={index}
-                                        ticket={item}
-                                    />
+                                    <View style={[styles.items]}>
+                                        <Ticket
+                                            key={item.id}
+                                            scrollXIndex={scrollIndex}                                        
+                                            index={index}
+                                            ticket={item}
+                                            nextExp={store.tickets[index + 1]?.scratchableBeforeUnlock || 0}
+                                        />
+                                    </View>
                                 )
                             }}
-                        />
+                        /> */}
                     </Animated.View>
                 </PanGestureHandler>
             </View>
@@ -107,4 +127,9 @@ const styles = StyleSheet.create({
         paddingBottom: 3,
         color: '#000'
     },
+    items: {
+        position: 'absolute',
+        width: WIDTH_RAFFLE,
+        height: WIDTH_RAFFLE
+    }
 });

@@ -7,23 +7,47 @@ import { setAdsVisible, setAdsLoading, setScratchVisible, setIsReward } from '..
 import { store as ticketsStore } from './store';
 import { showError } from './errors';
   
-declare type EventNameType = 'rewardedVideoDidRewardUser' | 'rewardedVideoDidLoad' | 'rewardedVideoDidFailToLoad' | 'rewardedVideoDidOpen' | 'rewardedVideoDidStart' | 'rewardedVideoDidClose' | 'rewardedVideoWillLeaveApplication';
+export const useReward = () => 
+    useMemo(() => {
+        const { tickets: store } = ticketsStore.getState();
 
-export const removeRewardListener = () => {
-    const events: EventNameType[] = [
-        'rewardedVideoDidRewardUser',
-        'rewardedVideoDidLoad',
-        'rewardedVideoDidFailToLoad',
-        'rewardedVideoDidOpen',
-        'rewardedVideoDidStart',
-        'rewardedVideoDidClose',
-        'rewardedVideoWillLeaveApplication'
-    ]
-    
-    events.forEach(event => AdMobRewarded.removeEventListener(event, null));
-}
+        return {
+            addRewardListeners: () => {
+                AdMobRewarded.addEventListener('rewardedVideoDidLoad', () => {
+                    setAdsLoading(false);
+                });
+                AdMobRewarded.addEventListener('rewardedVideoDidFailToLoad', err => {
+                    // dispatch({type: 'TOGGLE_ADS_LOADING', isLoading: true});
+                    // throw Error('fgsrdht', err);
+                });
+                AdMobRewarded.addEventListener('rewardedVideoDidClose', () => {
+                    console.log('close')
+                    if(store.isReward) {
+                        setScratchVisible(true);
+                    }
+                    setAdsLoading(true);
+                    setAdsVisible(false);
+                    console.log('end-close')
+
+                    requestAd();
+                });
+                AdMobRewarded.addEventListener('rewardedVideoDidRewardUser', () => {
+                    setIsReward(true);
+                });
+                AdMobRewarded.addEventListener('rewardedVideoDidOpen', () => {
+                    setAdsVisible(true);
+                });
+            },
+            
+            requestAd: async () => await AdMobRewarded.requestAdAsync().catch(error => console.warn(error)),
+            isReady: async () => await AdMobRewarded.getIsReadyAsync()
+        }
+    },
+    []
+)
 
 export const setupAds = async () => {
+    // AdMobRewarded.setTestDeviceID('EMULATOR');
     await AdMobRewarded.setAdUnitID('ca-app-pub-1586751755244367/3248128330');
 };
 

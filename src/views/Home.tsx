@@ -1,42 +1,21 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useMemo } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Dimensions, ScrollView } from 'react-native';
 import { useDispatch } from 'react-redux';
 import { toggleDrawer } from '../provider/app/app.actions';
-import { useAppStore } from '../utils/store';
+import { useAppStore, useTicketStore } from '../utils/store';
 import Drawer from './Drawer';
 import Header from '../components/Header';
 import Lotos from '../components/Lotos';
-import Animated, { interpolate, runOnJS, useAnimatedGestureHandler, useAnimatedStyle, useDerivedValue, useSharedValue, withTiming } from 'react-native-reanimated';
-import { State, PanGestureHandler } from 'react-native-gesture-handler';
+import Animated, { interpolate, useAnimatedStyle } from 'react-native-reanimated';
 import Tickets from '../components/Tickets';
 import { useTiming } from 'react-native-redash';
-import { addRewardListeners, removeRewardListener } from '../utils/ads';
 
 const { width, height } = Dimensions.get('screen');
-
-interface HomeProps {}
 
 const Home = () => {
     const dispatch = useDispatch();
     const store = useAppStore();
     const isOpen = useTiming(store.drawerIsOpen);
-
-    const wrapper = () => {
-        dispatch(toggleDrawer)
-    }
-
-    const handlerGesture = useAnimatedGestureHandler(
-        {
-            onEnd: ({translationX}) => {
-                if (store.drawerIsOpen) {
-                    if (translationX < -(width / 3)) {
-                        runOnJS(wrapper)();
-                    }
-                }
-            },
-        },
-    );
-
     const style = useAnimatedStyle(() => ({
         transform: [{
             scale: interpolate(
@@ -65,25 +44,23 @@ const Home = () => {
     }))
 
     return (
-        <PanGestureHandler onGestureEvent={handlerGesture} >
-            <Animated.View style={styles.main}>
-                <Drawer />
-                <Animated.View style={[styles.home, style ]}>
-                    <Header />
-                    {
-                        store.drawerIsOpen ? (
-                            <TouchableOpacity style={styles.cache} onPress={() => dispatch(toggleDrawer)}></TouchableOpacity>
-                        )  : null
-                    }
-                    <ScrollView showsVerticalScrollIndicator={false}>
-                        <View style={styles.main}>
-                            <Tickets />
-                            <Lotos />
-                        </View>
-                    </ScrollView>
-                </Animated.View>
+        <Animated.View style={styles.main}>
+            <Drawer />
+            <Animated.View style={[styles.home, style ]}>
+                <Header />
+                {
+                    store.drawerIsOpen ? (
+                        <TouchableOpacity style={styles.cache} onPress={() => dispatch(toggleDrawer)}></TouchableOpacity>
+                    )  : null
+                }
+                <ScrollView showsVerticalScrollIndicator={false}>
+                    <View style={styles.main}>
+                        <Tickets />
+                        <Lotos />
+                    </View>
+                </ScrollView>
             </Animated.View>
-        </PanGestureHandler>
+        </Animated.View>
     );
 }
 

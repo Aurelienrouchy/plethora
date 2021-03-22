@@ -11,6 +11,11 @@ export const signWithGoogle = async () => {
             iosClientId: '108595256943-qq5i3mc7cn5u10ghoflb9hp9n3os10oc.apps.googleusercontent.com',
             androidClientId: '108595256943-r6ogjvtbmqonlrbaonjcichnvpka43jo.apps.googleusercontent.com',
             scopes: ['profile', 'email'],
+            // iosClientId: '108595256943-qq5i3mc7cn5u10ghoflb9hp9n3os10oc.apps.googleusercontent.com',
+            // iosStandaloneAppClientId: '108595256943-qq5i3mc7cn5u10ghoflb9hp9n3os10oc.apps.googleusercontent.com',
+            // androidClientId: '766840691282-ebi6v0bgncfm6mch51nmhcrlhvcqadre.apps.googleusercontent.com',
+            // androidStandaloneAppClientId: '766840691282-ebi6v0bgncfm6mch51nmhcrlhvcqadre.apps.googleusercontent.com',
+            // scopes: ['profile', 'email'],
         });
 
         if (res.type === 'success') {

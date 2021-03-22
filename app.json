@@ -6,6 +6,10 @@
         "versionCode": 1,
         "package": "com.plethoria",
         "config": {
+          "googleSignIn": {
+            // "apiKey": "AIzaSyCqGudRuycIAw9nbuxXDaJh6w1VD6xYtMM",
+            // "certificateHash": "96:E2:95:96:0B:CF:43:AD:E6:31:C4:5B:11:CF:F3:71:E1:1C:E4:89"
+          },
           "googleMobileAdsAppId": "ca-app-pub-1586751755244367~8944629991"
         }
       },

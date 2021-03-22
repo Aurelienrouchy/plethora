@@ -14,7 +14,7 @@ import { SharedElement } from 'react-navigation-shared-element';
 // import { GET_TICKET } from '../graphql/queries'
 
 // import Scratch from '../components/Scratch/index.js';
-import Animated from 'react-native-reanimated';
+import Animated, { interpolate, useAnimatedStyle } from 'react-native-reanimated';
 import { useNavigation } from '@react-navigation/native';
 import CroixScratch from '../components/CroixScratch';
 import PlayButton from '../components/PlayButton';
@@ -23,29 +23,41 @@ import { isReady, requestAd, showAd } from '../utils/ads';
 import Scratch from '../components/Scratch';
 import { showError } from '../utils/errors';
 import { Tickets } from '../provider/tickets/tickets.types';
-import { setScratchVisible } from '../provider/tickets/tickets.action';
+import { addCoins, addExperiences, setIsReward, setScratchVisible } from '../provider/tickets/tickets.action';
+import { useTiming } from 'react-native-redash';
 
 const { width, height } = Dimensions.get('screen');
 
 const Play = ({ route }) => {
     const [isScratched, setIsScratched] = useState<boolean>(false);
+    const [isScratchVisible, setIsScratchVisible] = useState<boolean>(false);
+    const [data, setData] = useState<number[]>([12, 45, 29, 90, 0]);
     const ticket: Tickets = route.params.ticket
     const store = useTicketStore();
+    const animation = useTiming(isScratched)
+    const scratchStyle = useAnimatedStyle(() => ({
+        opacity: interpolate(
+            animation.value,
+            [0, 1],
+            [0, 1]
+        ),
+        transform: [{
+            translateY: interpolate(
+                animation.value,
+                [0, 1],
+                [-height, 0]
+            )
+        }]
+    }))
 
     useEffect(() => {
-        const getIsReady = async () => {
-            try {
-                const adsIsReady = await isReady();
-
-                if (!adsIsReady) {
-                    await requestAd();
-                }
-            } catch (error) {
-                showError('Ads loading problem')
-            }
+        if (!store.adsIsVisible && store.isReward) {
+            // if (called) refetch();
+            // else getTicket();
+            setIsScratchVisible(true);
+            setTimeout(() => setIsScratched(true), 400)
         }
-        getIsReady();
-    }, []);
+    }, [store.adsIsVisible, store.isReward]);
 
     
     // const [getTicket, { called, loading, data, refetch }] = useLazyQuery(GET_TICKET);
@@ -71,8 +83,12 @@ const Play = ({ route }) => {
     };
 
     const onFinishScratch = (coins) => {
-        setScratchVisible(false);
-        // setCoins(coins);
+        setIsScratched(false);
+        setTimeout(() => setIsScratchVisible(false), 400)
+        setIsReward(false);
+        addCoins(10);
+        addExperiences(10)
+
         // dispatchMain({type: 'UPADATE_COINS', coins})
         // showWinCoinModal();
     };
@@ -81,11 +97,10 @@ const Play = ({ route }) => {
         <View style={styles.container}>
             <View style={styles.main}>
                 {
-                    store.scratchIsVisible ? (
-                        <Animated.View style={styles.scratch} >
-                            <Scratch ticket={ticket} onFinish={onFinishScratch}/>
-                        </Animated.View>
-                    ) : null
+                    isScratchVisible && 
+                    <Animated.View style={[scratchStyle, styles.scratch]} >
+                        <Scratch data={data} ticket={ticket} onFinish={onFinishScratch}/>
+                    </Animated.View>
                 }
                 <SharedElement id={`item.${ticket.id}.image`}>
                     <Image resizeMode="cover" style={styles.image} source={{uri: ticket.image}} />

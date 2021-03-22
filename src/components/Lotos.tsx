@@ -46,7 +46,7 @@ export default function Lotos() {
 
     return (
         <View style={styles.main}>
-            <Text style={styles.title}>Tombola</Text>
+            <Text style={styles.title}>Lotos</Text>
             <View style={styles.lotos}>
                 <ScrollView showsVerticalScrollIndicator={false} >
                     {

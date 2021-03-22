@@ -12,7 +12,7 @@ interface LotoProps {
 const Loto = ({ loto }: LotoProps) => {
     const navigation = useNavigation();
 
-    const onClick = () => navigation.navigate('ChooseNumbersLoto', { loto, id: loto.id });
+    const onClick = () => navigation.navigate('LotoGridView', { loto, id: loto.id });
 
     return (
         <View style={[styles.main]}>

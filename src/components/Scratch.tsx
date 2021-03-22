@@ -10,19 +10,17 @@ const { width, height } = Dimensions.get('screen');
 
 interface ScratchProps {
     ticket: Tickets;
-    onFinish: any
+    onFinish: any;
+    data: number[]
 }
 
-export default function Scratch({ ticket, onFinish }: ScratchProps) {
+export default function Scratch({ ticket, onFinish, data }: ScratchProps) {
     const el = useRef(null);
     const [ready, setReady] = useState(false);
     const [html, setHtml] = useState('');
 
-    const data = {}
-
     useLayoutEffect(() => {
         // if (data) {
-            const data = [12, 45, 29, 90, 0];
             const position = {
                 0: {
                     x: width / 2 - 35,
@@ -113,7 +111,7 @@ export default function Scratch({ ticket, onFinish }: ScratchProps) {
             setHtml(fileContents);
         };
         getHtml();
-    }, []);
+    }, [data]);
 
     const onMessage = (event) => {
         switch (event.nativeEvent.data) {
@@ -129,10 +127,6 @@ export default function Scratch({ ticket, onFinish }: ScratchProps) {
                 break;
         }
     };
-
-    useEffect(() => {
-        // console.log('html', html)
-    }, [html])
 
     return (
         <View style={styles.main}>

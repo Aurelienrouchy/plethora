@@ -11,8 +11,9 @@ export const getTickets = async () => {
             level: t.level,
             minCoins: t.minCoins,
             maxCoins: t.maxCoins,
-            scratchBeforeUnlock: t.scratchBeforeUnlock,
-            image: t.imageUrl
+            scratchableBeforeUnlock: t.scratchableBeforeUnlock,
+            image: t.imageUrl,
+            progressColor: t.progressColor
         }))
         
         return tickets;

@@ -30,7 +30,9 @@ const LotoNumber = ({ isSelected, number, onPress }: LotoNumberProps) => {
             <TouchableWithoutFeedback onPress={() => onPress(number - 1)}>
                 <View style={styles.boule}>
                     <Animated.Text style={[styles.text]}>{number}</Animated.Text>
-                    <Animated.View style={[styles.mask, style]}></Animated.View>
+                    <Animated.View style={[styles.mask, style]}>
+                        <Animated.Text style={[styles.text]}>{number}</Animated.Text>
+                    </Animated.View>
                 </View>
             </TouchableWithoutFeedback>
         </View>
@@ -57,7 +59,9 @@ const styles = StyleSheet.create({
         ...StyleSheet.absoluteFillObject,
         backgroundColor: '#f6aa1f',
         borderRadius: 100,
-        zIndex: -1
+        zIndex: -1,
+        justifyContent: 'center',
+        alignItems: 'center',
     }
 })
 

@@ -9,7 +9,9 @@ import {
     SET_SCRATCH_VISIBLE,
     SET_ADS_LOADING,
     SET_TICKETS,
-    SET_IS_REWARD
+    SET_IS_REWARD,
+    REMOVE_COINS,
+    ADD_EXPERIENCES
 } from './tickets.types';
 
 export const TicketsReducer = (state: TicketsStateType = initialState, action: ActionsType) => {
@@ -17,12 +19,22 @@ export const TicketsReducer = (state: TicketsStateType = initialState, action: A
         case ADD_COINS:
             return {
                 ...state,
-                coins: action.coins
+                coins: state.coins + action.coins
+            };
+        case REMOVE_COINS:
+            return {
+                ...state,
+                coins: state.coins - action.coins
             };
         case ADD_TREES:
             return {
                 ...state,
                 trees: action.trees
+            };    
+        case ADD_EXPERIENCES:
+            return {
+                ...state,
+                experiences: state.experiences + action.exp
             };    
         case SET_ADS_VISIBLE:
             return {

@@ -9,10 +9,9 @@ import { Asset } from 'expo-asset';
 
 import { ApolloProvider } from '@apollo/client';
 import { client } from './src/utils/graphql';
-import { removeRewardListener, setupAds } from './src/utils/ads';
+import { setupAds } from './src/utils/ads';
 import { getTickets } from './src/utils/query';
 import { setTickets } from './src/provider/tickets/tickets.action';
-import { AdMobRewarded } from 'expo-ads-admob';
 
 function cacheImages(images: any[]) {
 	return images.map(image => {
@@ -34,23 +33,11 @@ const images = [
 export default function App() {
 	const [isReady, setIsReady] = useState(false);
 	// const [loaded] = Font.useFonts(fonts);
-
-	useEffect(() => {
-		setupAds();
-        AdMobRewarded.addEventListener('rewardedVideoDidRewardUser', () => console.log('Rewarded'));
-        AdMobRewarded.addEventListener('rewardedVideoDidLoad', () => console.log('VideoLoaded'));
-        AdMobRewarded.addEventListener('rewardedVideoDidFailToLoad', () => console.log('FailedToLoad'));
-        AdMobRewarded.addEventListener('rewardedVideoDidOpen', () => console.log('Opened'));
-        AdMobRewarded.addEventListener('rewardedVideoDidClose', () => console.log('Closed'));
-        AdMobRewarded.addEventListener('rewardedVideoWillLeaveApplication', () => console.log('LeaveApp'));
-        AdMobRewarded.addEventListener('rewardedVideoDidStart', () => console.log('Started'));
-        return () => AdMobRewarded.removeAllListeners()
-    }, [])
-
+	setupAds();
 	const _loadAssetsAsync = async () => {
 		
 		const imageAssets: any = cacheImages(images);
-
+		
 		const tickets = await getTickets();
 
 		setTickets(tickets)
