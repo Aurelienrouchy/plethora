@@ -1,7 +1,6 @@
 import React from 'react';
-import { Dimensions, StyleSheet, Text, TouchableWithoutFeedback, View } from 'react-native';
-import Animated, { interpolate, interpolateColor, useAnimatedStyle, useSharedValue, withTiming, } from 'react-native-reanimated';
-import { animated } from 'react-spring/renderprops-universal';
+import { Dimensions, StyleSheet, Text, TouchableWithoutFeedback, View, Animated } from 'react-native';
+import { useTiming } from '../utils/hooks';
 
 const { width, height } = Dimensions.get('screen');
 
@@ -12,18 +11,18 @@ interface LotoNumberProps {
 }
 
 const LotoNumber = ({ isSelected, number, onPress }: LotoNumberProps) => {
-    const animation = useSharedValue(isSelected);
-    const style = useAnimatedStyle(() => ({
-        opacity: withTiming(animation.value ? 1 : 0.3),
+    const animation = useTiming(isSelected);
+    const style = {
+        opacity: animation.interpolate({ inputRange: [0, 1], outputRange: [0.3, 1]}),
         shadowColor: "#000",
         shadowOffset: {
             width: 0,
-            height: withTiming(animation.value ? 2 : 0),
+            height: animation.interpolate({ inputRange: [0, 1], outputRange: [0, 2]}),
         },
-        shadowOpacity: withTiming(animation.value ? 0.34 : 0),
-        shadowRadius: withTiming(animation.value ? 6.27 : 0),
-        elevation: withTiming(animation.value ? 2 : 0),
-    }))
+        shadowOpacity: animation.interpolate({ inputRange: [0, 1], outputRange: [0, 0.34]}),
+        shadowRadius: animation.interpolate({ inputRange: [0, 1], outputRange: [0, 6.27]}),
+        elevation: animation.interpolate({ inputRange: [0, 1], outputRange: [0, 2]}),
+    }
 
     return (
         <View style={styles.main}>

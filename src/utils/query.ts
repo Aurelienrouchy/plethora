@@ -1,4 +1,4 @@
-import { showError } from "./errors";
+import { showMessage } from "./message";
 import { client, GET_TICKETS } from "./graphql"
 
 export const getTickets = async () => {
@@ -14,10 +14,9 @@ export const getTickets = async () => {
             scratchableBeforeUnlock: t.scratchableBeforeUnlock,
             image: t.imageUrl,
             progressColor: t.progressColor
-        }))
-        
+        }));
         return tickets;
     } catch (err) {
-        showError('Error with tickets loading')
+        showMessage('Error with tickets loading')
     }
 }

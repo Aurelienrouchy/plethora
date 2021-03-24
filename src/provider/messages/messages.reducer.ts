@@ -1,20 +1,20 @@
-import { state as initialState } from './errors.state';
+import { state as initialState } from './messages.state';
 import { 
-    SET_ERROR,
-    DISPLAY_ERROR,
-    ErrorsStateType,
+    SET_MESSAGE,
+    DISPLAY_MESSAGE,
+    MessagesStateType,
     ActionsType
-} from './errors.types';
+} from './messages.types';
 
-export const ErrorReducer = (state: ErrorsStateType = initialState, action: ActionsType) => {
+export const ErrorReducer = (state: MessagesStateType = initialState, action: ActionsType) => {
     switch (action.type) {
-        case SET_ERROR: {
+        case SET_MESSAGE: {
             return {
                 ...state,
                 text: action.text
             }
         }
-        case DISPLAY_ERROR: {
+        case DISPLAY_MESSAGE: {
             return {
                 ...state,
                 isDisplay: action.payload

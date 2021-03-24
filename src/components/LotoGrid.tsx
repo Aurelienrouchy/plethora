@@ -17,7 +17,7 @@ const LotoGrid = ({ numbers, selected, onPress, type }: LotoGridProps) => {
     return (
         <View style={styles.main}>
             {
-                loto.map((n, index) => <LotoNumber key={index} isSelected={selected.includes(index)} number={index + 1} onPress={onPress} />)
+                loto.map((n, index) => <LotoNumber key={index} isSelected={selected.includes(index + 1)} number={index + 1} onPress={() => onPress(index + 1)} />)
             }
         </View>
     );

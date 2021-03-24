@@ -46,7 +46,8 @@ export default function Lotos() {
 
     return (
         <View style={styles.main}>
-            <Text style={styles.title}>Lotos</Text>
+            <Text style={styles.title}>Lottery draws</Text>
+            <Text style={styles.subtitle}>More tickets, more chance to win !</Text>
             <View style={styles.lotos}>
                 <ScrollView showsVerticalScrollIndicator={false} >
                     {
@@ -63,8 +64,7 @@ export default function Lotos() {
 const styles = StyleSheet.create({
     main: {
         flex: 1,
-        marginTop: 30,
-        paddingRight: 30
+        paddingRight: 30,
     },
     header: {
         height: 30,
@@ -74,10 +74,16 @@ const styles = StyleSheet.create({
         flex: 1
     },
     title: {
-        // fontFamily: 'MontserratSM',
+        fontFamily: 'CocogooseRegular',
         fontSize: 24,
         color: '#303030',
         marginTop: 30,
+        marginBottom: 5
+    },
+    subtitle: {
+        fontFamily: 'CocogooseSemilight',
+        fontSize: 14,
+        color: '#949494',
         marginBottom: 20
     },
 });

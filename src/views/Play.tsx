@@ -1,30 +1,14 @@
-import React, {
-    useContext, useState, useEffect, useMemo,
-} from 'react';
-import {
-    StyleSheet, View, Text, TouchableOpacity, Dimensions, Image, Button
-} from 'react-native';
-import { AdMobRewarded } from 'expo-ads-admob'
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, View, Dimensions, Image, Animated } from 'react-native';
 import { SharedElement } from 'react-navigation-shared-element';
-// import { useLazyQuery } from '@apollo/react-hooks';
-// import { useTimingTransition } from 'react-native-redash';
-
-// import { useRewardContext } from '../hooks/use-reward';
-// import { Context } from '../hooks/use-context';
-// import { GET_TICKET } from '../graphql/queries'
-
-// import Scratch from '../components/Scratch/index.js';
-import Animated, { interpolate, useAnimatedStyle } from 'react-native-reanimated';
-import { useNavigation } from '@react-navigation/native';
 import CroixScratch from '../components/CroixScratch';
 import PlayButton from '../components/PlayButton';
 import { useTicketStore } from '../utils/store';
-import { isReady, requestAd, showAd } from '../utils/ads';
+import { showAd } from '../utils/ads';
 import Scratch from '../components/Scratch';
-import { showError } from '../utils/errors';
 import { Tickets } from '../provider/tickets/tickets.types';
-import { addCoins, addExperiences, setIsReward, setScratchVisible } from '../provider/tickets/tickets.action';
-import { useTiming } from 'react-native-redash';
+import { addCoins, addExperiences, setIsReward } from '../provider/tickets/tickets.action';
+import { useTiming } from '../utils/hooks';
 
 const { width, height } = Dimensions.get('screen');
 
@@ -35,20 +19,12 @@ const Play = ({ route }) => {
     const ticket: Tickets = route.params.ticket
     const store = useTicketStore();
     const animation = useTiming(isScratched)
-    const scratchStyle = useAnimatedStyle(() => ({
-        opacity: interpolate(
-            animation.value,
-            [0, 1],
-            [0, 1]
-        ),
+    const scratchStyle = {
+        opacity: animation.interpolate({ inputRange: [0, 1], outputRange: [0, 1]}),
         transform: [{
-            translateY: interpolate(
-                animation.value,
-                [0, 1],
-                [-height, 0]
-            )
+            translateY: animation.interpolate({ inputRange: [0, 1], outputRange: [-height, 0]})
         }]
-    }))
+    }
 
     useEffect(() => {
         if (!store.adsIsVisible && store.isReward) {

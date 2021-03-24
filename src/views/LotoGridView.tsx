@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigation } from '@react-navigation/native';
-import { StyleSheet, View, Text, TouchableOpacity, Image, Dimensions } from 'react-native';
-import Animated, { interpolate, useAnimatedStyle, useSharedValue, withTiming, withDelay } from 'react-native-reanimated';
+import { StyleSheet, View, Text, TouchableOpacity, Image, Dimensions, Animated } from 'react-native';
 import { SharedElement } from 'react-navigation-shared-element';
 import LotoGrid from '../components/LotoGrid';
 import { selectXNumberInArray } from '../utils/math';
@@ -10,7 +9,7 @@ import LotoInfos from '../components/LotoInfos';
 import LotoTicketsHistory from '../components/LotoTicketsHistory';
 import { participate } from '../utils/loto';
 import { useLotosStore } from '../utils/store';
-import { showError } from '../utils/errors';
+import { showMessage } from '../utils/message';
 
 const { width, height } = Dimensions.get('screen');
 
@@ -24,17 +23,20 @@ const ChooseNumbersLoto = ({ route }: ChooseNumbersLotoProps) => {
     const loto = store.lotos.filter(lt => lt.id === id)[0];
     const navigation = useNavigation();
     
-    const animation = useSharedValue<number>(0);
-    const titleStyle = useAnimatedStyle(() => ({
-        opacity: interpolate(
-            animation.value,
-            [0, 1],
-            [0, 0.7]
-        )
-    }));
+    const animation = useRef( new Animated.Value(0)).current;
+    const titleStyle = {
+        opacity: animation.interpolate({ inputRange: [0, 1], outputRange: [0, 0.7]})
+    };
 
     useEffect(() => {
-        animation.value = withDelay(500, withTiming(1));
+        Animated.sequence([
+            Animated.delay(500),
+            Animated.timing(animation, {
+                toValue: 1,
+                duration: 300,
+                useNativeDriver: true
+            })
+        ]).start(() => animation.setValue(1))
     }, [])
 
     const [selectedClassic, setSelectedClassic] = useState([]);
@@ -57,7 +59,7 @@ const ChooseNumbersLoto = ({ route }: ChooseNumbersLotoProps) => {
 
     const validate = () => {
         if (selectedClassic.length < loto.maxNumber || selectedComplementary.length < loto.maxComplementary) {
-            showError('You need 5 starts')
+            showMessage(`You need ${loto.maxNumber - selectedClassic.length} numbers & ${loto.maxComplementary - selectedComplementary.length} complementary numbers`)
             return
         }
         participate(selectedClassic, loto.id)
@@ -80,6 +82,18 @@ const ChooseNumbersLoto = ({ route }: ChooseNumbersLotoProps) => {
                 <LotoInfos loto={loto} />
                 <LotoTicketsHistory id={loto.id} />
             </Animated.View>
+            <View >
+                <View style={styles.numbers}>
+                {
+                    selectedClassic.map((n, idx) => <Text key={idx} style={styles.number}>{n} {idx < selectedClassic.length - 1 && '- '}</Text>)
+                }
+                </View>
+                <View style={styles.numbers}>
+                {
+                    selectedComplementary.map((n, idx) => <Text key={idx} style={styles.number}>{n} {idx < selectedComplementary.length - 1 && '- '}</Text>)
+                }
+                </View>
+            </View>
             <View>
                 <LotoGrid numbers={loto.lotoNumbers} onPress={number => onPress(selectedClassic, setSelectedClassic, number, loto.maxNumber)} selected={selectedClassic}/>
                 <LotoGrid numbers={loto.lotoComplementary} onPress={number => onPress(selectedComplementary, setSelectedComplementary, number, loto.maxComplementary)} selected={selectedComplementary} type="complementary" />
@@ -122,6 +136,14 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: '#fff',
+    },
+    numbers: {
+        flexDirection: 'row',
+        width: '100%',
+        justifyContent: 'center',
+    },
+    number: {
+        fontSize: 24
     },
     image: {
         width: '100%',

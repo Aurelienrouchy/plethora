@@ -1,35 +1,26 @@
-import React, { useEffect, useLayoutEffect, useRef } from 'react';
-import { StyleSheet, View, TouchableOpacity, Text, Dimensions} from 'react-native';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { StyleSheet, View, TouchableOpacity, Text, Dimensions, Animated } from 'react-native';
 import LottieView from 'lottie-react-native';
-import { signIn } from '../provider/user/user.actions';
 import { signWithFacebook, signWithGoogle } from '../utils/authentification';
 import { useUserStore } from '../utils/store';
-import { useTiming } from 'react-native-redash';
-import Animated, { useAnimatedStyle, interpolate, withTiming, useSharedValue } from 'react-native-reanimated';
+import { useTiming } from '../utils/hooks';
 
 const { width, height } = Dimensions.get('screen');
 
  const SignIn = () => {
     const store = useUserStore();
     const lottie = useRef(null);
-    const animation = useSharedValue(0);
-    const style = useAnimatedStyle(() => ({
-        opacity: interpolate(
-            animation.value,
-            [0, 1],
-            [1, 0]
-        ),
+    const [value, setValue] = useState(0);
+    const animation = useTiming(value);
+    const style = {
+        opacity: animation.interpolate({ inputRange: [0, 1], outputRange: [1, 0]}),
         transform: [{
-            translateY: interpolate(
-                animation.value,
-                [0, 1],
-                [0, -130]
-            ),
+            translateY: animation.interpolate({ inputRange: [0, 1], outputRange: [0, -130]})
         }]
-    }))
+    }
 
     useLayoutEffect(() => {
-        animation.value = withTiming(animation.value ? 0 : 1)
+        setValue(value ? 0 : 1)
     }, [store.loading])
 
     useEffect(() => {

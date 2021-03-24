@@ -1,7 +1,6 @@
-import React, { useEffect } from 'react';
-import { StyleSheet, View, Text, Dimensions } from 'react-native';
-import { FlatList, PanGestureHandler } from 'react-native-gesture-handler';
-import Animated, { useAnimatedGestureHandler, useSharedValue } from 'react-native-reanimated';
+import React, { memo, useEffect, useLayoutEffect, useState } from 'react';
+import { StyleSheet, View, Text, Dimensions, Animated } from 'react-native';
+import { State, PanGestureHandler } from 'react-native-gesture-handler';
 
 import Ticket from '../components/Ticket';
 
@@ -10,104 +9,68 @@ import { useTicketStore } from '../utils/store';
 const { width, height } = Dimensions.get('screen');
 const WIDTH_RAFFLE = width / 1.8;
 
-export default function Tickets() {
+const Tickets = () => {
     const store = useTicketStore();
-    const scrollIndex = useSharedValue(0);
+    const scrollIndex: any = new Animated.Value(0);
+    const [tickets, setTickets] = useState([])
 
-    const handlerGesture = useAnimatedGestureHandler(
-        {
-            onEnd: ({translationX}) => {
-                if (translationX > 50) {
-                    if (scrollIndex.value === 0) {
-                        return;
-                    }
-                    scrollIndex.value = scrollIndex.value - 1;
+    const handleStateChange =  ({ nativeEvent }) => {
+        if (nativeEvent.state === State.END) {
+            if (nativeEvent.translationX > 50) {
+                if (scrollIndex._value === 0) {
+                    return;
                 }
-                if (translationX < -50) {
-                    if (scrollIndex.value === store?.tickets.length - 1) {
-                        return;
-                    }
-                    scrollIndex.value = scrollIndex.value + 1;
+                scrollIndex.setValue(scrollIndex._value - 1);
+            }
+            if (nativeEvent.translationX < -50) {
+                if (scrollIndex._value === store?.tickets.length - 1) {
+                    return;
                 }
-            },
-        },
-    );
-    
+                scrollIndex.setValue(scrollIndex._value + 1);
+            }
+        }
+    };
+
+    useLayoutEffect(() => {
+        setTickets(store.tickets)
+    }, [])
+
     return (
         <View style={styles.main}>
-            <View style={styles.header}>
-                <Text style={styles.title}>Tickets</Text>
-            </View>
-            <View >
-                <PanGestureHandler  onGestureEvent={handlerGesture} >
-                    <Animated.View style={styles.scrollview}>
-                    {
-                        store.tickets.map((tiket, index) => {
-                            return (
-                                <View style={[styles.items, {zIndex: store.tickets.length - index }]}>
-                                    <Ticket
-                                        key={tiket.id}
-                                        scrollXIndex={scrollIndex}                                        
-                                        index={index}
-                                        ticket={tiket}
-                                        nextExp={store.tickets[index + 1]?.scratchableBeforeUnlock || 0}
-                                    />
-                                </View>
-                            )
-                        })
-                    }
-                        {/* <FlatList
-                            data={store.tickets}
-                            keyExtractor={(_, index) => String(index)}
-                            scrollEnabled={false}
-                            horizontal
-                            contentContainerStyle={{ flex: 1 }}
-                            removeClippedSubviews={false}
-                            CellRendererComponent={({
-                                item,
-                                index,
-                                children,
-                                style,
-                                ...props
-                              }) => {
-                                const newStyle = [style, {zIndex: store.tickets.length - index }];
-                                return (
-                                  <View style={newStyle} index={index} {...props}>
-                                    {children}
-                                  </View>
-                                );
-                            }}
-                            renderItem={({ item, index }) => {
-                                return (
-                                    <View style={[styles.items]}>
-                                        <Ticket
-                                            key={item.id}
-                                            scrollXIndex={scrollIndex}                                        
-                                            index={index}
-                                            ticket={item}
-                                            nextExp={store.tickets[index + 1]?.scratchableBeforeUnlock || 0}
-                                        />
-                                    </View>
-                                )
-                            }}
-                        /> */}
-                    </Animated.View>
-                </PanGestureHandler>
-            </View>
+            <Text style={styles.title}>Scratch To Win Coins</Text>
+            <Text style={styles.subtitle}>Collect coins !</Text>
+            <PanGestureHandler onHandlerStateChange={handleStateChange}>
+                <View style={styles.scrollview}>
+                {
+                    tickets.map((tiket, index) => {
+                        return (
+                            <Ticket
+                                key={tiket.id}
+                                scrollXIndex={scrollIndex}                                        
+                                index={index}
+                                ticket={tiket}
+                                nextExp={store.tickets[index + 1]?.scratchableBeforeUnlock || 0}
+                            />
+                        )
+                    })
+                }
+                </View>
+            </PanGestureHandler>
         </View>
     );
-}
+};
+
+export default memo(Tickets)
 
 const styles = StyleSheet.create({
     main: {
-        height: width / 1.8,
-        marginTop: 30,
-        marginBottom: 7,
+        height: width / 1.8 + 110,
         width: width - 30,
     },
     scrollview: {
         position: 'relative',
-        height: '100%',
+        height: width / 1.8,
+        width: '100%',
     },
     header: {
         height: 30,
@@ -117,19 +80,16 @@ const styles = StyleSheet.create({
         marginBottom: 20
     },
     title: {
-        // fontFamily: 'MontserratSM',
+        fontFamily: 'CocogooseRegular',
         fontSize: 24,
-        color: '#000'
+        color: '#303030',
+        marginTop: 30,
+        marginBottom: 5
     },
-    more: {
-        // fontFamily: 'MontserratM',
+    subtitle: {
+        fontFamily: 'CocogooseSemilight',
         fontSize: 14,
-        paddingBottom: 3,
-        color: '#000'
+        color: '#949494',
+        marginBottom: 20
     },
-    items: {
-        position: 'absolute',
-        width: WIDTH_RAFFLE,
-        height: WIDTH_RAFFLE
-    }
 });

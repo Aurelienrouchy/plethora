@@ -5,7 +5,7 @@ import {
   } from 'expo-ads-admob';
 import { setAdsVisible, setAdsLoading, setScratchVisible, setIsReward } from '../provider/tickets/tickets.action';
 import { store as ticketsStore } from './store';
-import { showError } from './errors';
+import { showError } from './message';
   
 export const useReward = () => 
     useMemo(() => {

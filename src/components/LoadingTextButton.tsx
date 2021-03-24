@@ -1,12 +1,8 @@
-import React, {
-    useContext, useState, useEffect, useMemo, useRef,
-} from 'react';
-import {
-    StyleSheet, View, StyleProp, ViewStyle, TextStyle } from 'react-native';
-import Animated, { useAnimatedStyle, interpolate } from 'react-native-reanimated';
-import { useTiming } from 'react-native-redash';
+import React, { useEffect, useRef } from 'react';
+import { StyleSheet, View, Animated } from 'react-native';
 
 import LottieView from 'lottie-react-native';
+import { useTiming } from '../utils/hooks';
 interface LoadingButtonProps {
     style: any;
     loading: boolean;
@@ -16,34 +12,30 @@ interface LoadingButtonProps {
 const LoadingTextButton = ({ loading, text, style }: LoadingButtonProps) => {
     const animation = useTiming(loading);
     const lottie = useRef(null);
-    const textStyle = useAnimatedStyle(() => ({
-        opacity: interpolate(
-            animation.value,
-            [0, 1],
-            [1, 0]
-        ),
+    const textStyle = {
+        opacity: animation.interpolate({
+            inputRange: [0 , 1],
+            outputRange: [1, 0]
+        }),
         transform: [{
-            translateY: interpolate(
-                animation.value,
-                [0, 1],
-                [27, -30]
-            ),
+            translateY: animation.interpolate({
+                inputRange: [0 , 1],
+                outputRange: [27, -30]
+            })
         }]
-    }))
-    const lottieStyle = useAnimatedStyle(() => ({
-        opacity: interpolate(
-            animation.value,
-            [0, 1],
-            [0, 1]
-        ),
+    }
+    const lottieStyle = {
+        opacity: animation.interpolate({
+            inputRange: [0 , 1],
+            outputRange: [0 , 1],
+        }),
         transform: [{
-            translateY: interpolate(
-                animation.value,
-                [0, 1],
-                [0, -130 / 2 + (style.fontSize || 18)]
-            ),
+            translateY: animation.interpolate({
+                inputRange: [0 , 1],
+                outputRange: [0, -130 / 2 + (style.fontSize || 18)]
+            }),
         }]
-    }))
+    }
 
     useEffect(() => {
         lottie.current.play()

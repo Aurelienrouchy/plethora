@@ -12,6 +12,7 @@ import { client } from './src/utils/graphql';
 import { setupAds } from './src/utils/ads';
 import { getTickets } from './src/utils/query';
 import { setTickets } from './src/provider/tickets/tickets.action';
+import { useFonts } from 'expo-font';
 
 function cacheImages(images: any[]) {
 	return images.map(image => {
@@ -28,11 +29,24 @@ const images = [
 	require('./assets/icons/tree.png'),
 	require('./assets/icons/coin.png'),
 	require('./assets/icons/croix.png'),
-]
+];
+
+const fonts = {
+	CocogooseRegular: require('./assets/fonts/cocogoose_pro_regular.ttf'),
+	CocogooseBold: require('./assets/fonts/cocogoose_pro_bold.ttf'),
+	CocogooseDark: require('./assets/fonts/cocogoose_pro_dark.ttf'),
+	CocogooseInline: require('./assets/fonts/cocogoose_pro_inline.ttf'),
+	CocogooseOutline: require('./assets/fonts/cocogoose_pro_outlined.ttf'),
+	CocogooseSemilight: require('./assets/fonts/cocogoose_pro_semilight.ttf'),
+	CocogooseThin: require('./assets/fonts/cocogoose_pro_thin.ttf'),
+	CocogooseUltraThin: require('./assets/fonts/cocogoose_pro_ultralight.ttf'),
+}
+
 
 export default function App() {
 	const [isReady, setIsReady] = useState(false);
-	// const [loaded] = Font.useFonts(fonts);
+	const [loaded] = useFonts(fonts);
+
 	setupAds();
 	const _loadAssetsAsync = async () => {
 		
@@ -45,7 +59,7 @@ export default function App() {
 		await Promise.all([...imageAssets]);
 	}
 
-	if (!isReady) {
+	if (!isReady || !loaded) {
 		return (
 			<AppLoading
 				startAsync={_loadAssetsAsync}

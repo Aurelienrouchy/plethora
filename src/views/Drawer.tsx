@@ -1,7 +1,6 @@
 import { useNavigation } from '@react-navigation/native';
 import React from 'react';
 import { View, StyleSheet, TouchableOpacity, Text, Image, Dimensions } from 'react-native';
-import Animated from 'react-native-reanimated';
 import { useDispatch } from 'react-redux';
 import { toggleDrawer } from '../provider/app/app.actions';
 import { signOut } from '../provider/user/user.actions';
@@ -21,7 +20,7 @@ const Drawer = ({
 
     const navigate = (route: string) => {
         setTimeout(() => navigation.navigate(route), 300);
-        animation.value = animation.value ? 0 : 1;
+        // animation.value = animation.value ? 0 : 1;
         dispatch(toggleDrawer);
     };
     

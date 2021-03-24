@@ -1,8 +1,9 @@
 import { useNavigation } from '@react-navigation/native';
 import React from 'react';
-import { StyleSheet, View, TouchableOpacity, Image } from 'react-native';
+import { StyleSheet, View, TouchableOpacity, Image, Text } from 'react-native';
 import { SharedElement } from 'react-navigation-shared-element';
 import { loto } from '../provider/lotos/lotos.types';
+import { useTicketStore } from '../utils/store';
 import LotoInfos from './LotoInfos';
 
 interface LotoProps {
@@ -11,16 +12,24 @@ interface LotoProps {
 
 const Loto = ({ loto }: LotoProps) => {
     const navigation = useNavigation();
-
+    const store = useTicketStore();
     const onClick = () => navigation.navigate('LotoGridView', { loto, id: loto.id });
+    const isLocked = loto.cost > store.coins;
 
     return (
         <View style={[styles.main]}>
-            <TouchableOpacity style={styles.touch} onPress={ () => onClick() } >
+            <TouchableOpacity style={styles.touch} disabled={isLocked} onPress={ () => onClick() } >
                 <SharedElement style={styles.imageContainer} id={`loto.${loto?.id}.image`}>
                     <Image resizeMode="cover" style={[styles.imageContainer, styles.image]} source={loto?.imageUrl} />
                 </SharedElement>
                 <LotoInfos loto={loto} style={styles.infos}/>
+                {
+                    isLocked ? (
+                        <View style={styles.locked}>
+                            <Text style={styles.locked_text}>locked</Text>
+                        </View>
+                    ) : null
+                }
             </TouchableOpacity>
         </View>
     );
@@ -81,4 +90,18 @@ const styles = StyleSheet.create({
         height: 20,
         marginBottom: 2
     },
+    locked: {
+        ...StyleSheet.absoluteFillObject,
+        backgroundColor: '#000',
+        opacity: 0.5,
+        borderRadius: 20,
+        zIndex: 2,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    locked_text: {
+        fontSize: 50,
+        color: '#fff',
+        fontFamily: 'CocogooseRegular'
+    }
 });

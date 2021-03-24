@@ -6,7 +6,7 @@ export const participate = (numbers: number[], id: number) => {
     setLotoLoading(true)
     try {
         // TODO : make api call
-
+        
         addLotoGrid(numbers, id)
         setLotoLoading(false)
     } catch (err) {

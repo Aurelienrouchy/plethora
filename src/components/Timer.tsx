@@ -2,8 +2,7 @@ import { useNavigation } from '@react-navigation/native';
 import React, {
     useContext, useState, useEffect
 } from 'react';
-import { StyleSheet, Dimensions, TextInput } from 'react-native';
-import Animated from 'react-native-reanimated';
+import { StyleSheet, Dimensions, TextInput, Animated } from 'react-native';
 import { secondToday, timerToNext } from '../utils/date';
 
 const { width, height } = Dimensions.get('screen');
@@ -18,7 +17,6 @@ interface SMH {
     h: number;
 }
 
-Animated.addWhitelistedNativeProps({ text: true });
 const AnimatedTextInput = Animated.createAnimatedComponent(TextInput);
 
 export default function Timer({ step }: Timer) {

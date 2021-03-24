@@ -1,7 +1,6 @@
 import React from 'react';
-import { StyleSheet, TouchableOpacity, ViewStyle, StyleProp } from 'react-native';
-import Animated, { useAnimatedStyle, interpolate } from 'react-native-reanimated';
-import { useTiming } from 'react-native-redash';
+import { StyleSheet, TouchableOpacity, ViewStyle, StyleProp, Animated } from 'react-native';
+import { useTiming } from '../utils/hooks';
 
 import LoadingTextButton from './LoadingTextButton';
 interface PlayButtonProps {
@@ -13,20 +12,12 @@ interface PlayButtonProps {
 
 const PlayButton = ({ style, loading, onPress, isScratchable }: PlayButtonProps) => {
     const animation = useTiming(isScratchable);
-    const mainStyle = useAnimatedStyle(() => ({
-        opacity: interpolate(
-            animation.value,
-            [0, 1],
-            [1, 0]
-        ),
+    const mainStyle = {
+        opacity: animation.interpolate({ inputRange: [0, 1], outputRange: [1, 0] }),
         transform: [{
-            translateY: interpolate(
-                animation.value,
-                [0, 1],
-                [0, 50]
-            ),
+            translateY: animation.interpolate({ inputRange: [0, 1], outputRange: [0, 50] })
         }]
-    }))
+    }
 
     return (
         <Animated.View style={[style, mainStyle]}>

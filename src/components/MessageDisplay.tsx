@@ -1,7 +1,6 @@
 import React from 'react';
-import { StyleSheet, Text, Dimensions } from 'react-native';
-import Animated, { interpolate, useAnimatedStyle, useSharedValue, withTiming, withDelay } from 'react-native-reanimated';
-import { useTiming } from 'react-native-redash';
+import { StyleSheet, Text, Dimensions, Animated } from 'react-native';
+import { useTiming } from '../utils/hooks';
 import { useErrorStore } from '../utils/store';
 
 const { width, height } = Dimensions.get('screen');
@@ -9,20 +8,18 @@ const { width, height } = Dimensions.get('screen');
 const ChooseNumbersLoto = () => {
     const store = useErrorStore()
     const animation = useTiming(store.isDisplay);
-    const style = useAnimatedStyle(() => ({
+    const style = {
         transform: [{
-            translateY: interpolate(
-                animation.value,
-                [0, 1],
-                [-100, 0]
-            )
+            translateY: animation.interpolate({
+                inputRange: [0, 1],
+                outputRange: [-100, 0]
+            })
         }],
-        opacity: interpolate(
-            animation.value,
-            [0, 1],
-            [0, 1]
-        ),
-    }))
+        opacity: animation.interpolate({
+            inputRange: [0, 1],
+            outputRange: [0, 1]
+        })
+    }
 
     return (
         <Animated.View style={[style, styles.main]}>

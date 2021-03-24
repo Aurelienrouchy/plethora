@@ -1,6 +1,5 @@
 import React from 'react';
-import { Image, StyleSheet, Text, TouchableWithoutFeedback, View } from 'react-native';
-import { useSharedValue, withTiming } from 'react-native-reanimated';
+import { Image, StyleSheet, Text, TouchableWithoutFeedback, View, Animated } from 'react-native';
 import { loto } from '../provider/lotos/lotos.types';
 import Timer from './Timer';
 
@@ -10,7 +9,7 @@ interface LotoInfosProps {
 }
 
 const LotoInfos = ({ loto, style }: LotoInfosProps) => {
-    const open = useSharedValue(1);
+    const open: any = new Animated.Value(1);
 
     return (
         <View style={[styles.main, style]}>
@@ -20,7 +19,16 @@ const LotoInfos = ({ loto, style }: LotoInfosProps) => {
             </View>
             <TouchableWithoutFeedback
                 onPress={() => {
-                open.value = withTiming(open.value === 1 ? 0 : 1);
+                    Animated.timing(
+                        open,
+                        { 
+                            toValue: open._value === 1 ? 0 : 1,
+                            duration: 300,
+                            useNativeDriver: true
+                        }).start(() => {
+                            open.setValue(open._value === 1 ? 0 : 1)
+                        }
+                    )
                 }}
             >   
                 <View
@@ -33,7 +41,6 @@ const LotoInfos = ({ loto, style }: LotoInfosProps) => {
                 </View>
             </TouchableWithoutFeedback>
             <Timer step={loto?.timer} />
-            
         </View>
     );
 }

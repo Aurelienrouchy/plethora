@@ -1,7 +1,6 @@
 import * as React from 'react';
-import { StyleSheet, Text, TextInput } from 'react-native';
-import { useEffect, useState } from 'react';
-import Animated, { Easing, useAnimatedProps, useDerivedValue, useSharedValue, withTiming } from 'react-native-reanimated';
+import { StyleSheet, TextInput, Animated, Text } from 'react-native';
+import { useEffect, useMemo, useRef, useState } from 'react';
 interface AnimatedTextProps {
     start?: number
     end?: number
@@ -10,7 +9,6 @@ interface AnimatedTextProps {
     style: any
 };
 
-Animated.addWhitelistedNativeProps({ text: true });
 const AnimatedTextInput = Animated.createAnimatedComponent(TextInput);
 
 const AnimatedText = React.memo(({
@@ -20,28 +18,29 @@ const AnimatedText = React.memo(({
     duration = 1000,
     style
 }: AnimatedTextProps) => {
-    const price = useSharedValue(start);
-    const formattedPrice = useDerivedValue(() => (`${price.value.toFixed(digits)}`));
-    const animatedProps = useAnimatedProps(() => {
-        return {
-            text: formattedPrice.value,
-        };
-    });
+    const count = useRef(new Animated.Value(0)).current;
+    const [val, setVal] = useState<string>(`${start}`);
 
     useEffect(() => {
-        price.value = withTiming(end, {
-            duration,
-            easing: Easing.in(Easing.ease),
+        count.addListener(({value}) => setVal(value.toFixed(digits)));
+        Animated.timing(
+            count,
+            {
+                toValue: end,
+                duration,
+                useNativeDriver: true
+            }
+        ).start(() => {
+            count.setValue(end);
         });
-    }, [end])
+    }, [end]);
 
     return (
         <AnimatedTextInput
             underlineColorAndroid="transparent"
             editable={false}
-            value={formattedPrice.value}
+            value={String(val)}
             style={[styles.text, style]}
-            {...{ animatedProps }}
         />
     );
 });

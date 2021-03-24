@@ -1,60 +1,52 @@
 import { useNavigation } from '@react-navigation/native';
-import React, {
-    useContext, useState, useEffect, useMemo,
-} from 'react';
-import {
-    StyleSheet, TouchableOpacity, Dimensions, Image
-} from 'react-native';
-import Animated, { interpolate, useAnimatedStyle } from 'react-native-reanimated';
-import { useTiming } from 'react-native-redash';
+import React, { useMemo } from 'react';
+import { StyleSheet, TouchableOpacity, Dimensions, Image, Animated } from 'react-native';
+import { useTiming } from '../utils/hooks';
 import { useTicketStore } from '../utils/store';
 import AnimatedText from './AnimatedText';
 
 const { width, height } = Dimensions.get('screen');
-
 interface CroixScratchProps {
     isScratchable: boolean;
 }
 
 const CroixScratch = ({ isScratchable }: CroixScratchProps) => {
     const navigation = useNavigation();
-    const animation = useTiming(isScratchable);
     const store = useTicketStore();
-    const croixStyle = useAnimatedStyle(() => ({
+
+    const animation = useTiming(isScratchable)
+    const croixStyle = {
         transform: [{ 
-            translateY: interpolate(
-                animation.value,
-                [0 , 1],
-                [0, 40]
-            )
+            translateY: animation.interpolate({
+                inputRange: [0 , 1],
+                outputRange: [0, 40]
+            })
         }],
-        opacity: interpolate(
-            animation.value,
-            [0 , 1],
-            [1, 0]
-        )
-    }))
-    const textStyle = useAnimatedStyle(() => ({
-        opacity: interpolate(
-            animation.value,
-            [0 , 1],
-            [0, 1]
-        ),
+        opacity: animation.interpolate({
+            inputRange: [0 , 1],
+            outputRange: [1, 0]
+        })
+    }
+
+    const textStyle = {
+        opacity: animation.interpolate({
+            inputRange: [0 , 1],
+            outputRange: [0, 1]
+        }),
         transform: [{ 
-            translateY: interpolate(
-                animation.value,
-                [0 , 1],
-                [0, 40]
-            )
+            translateY: animation.interpolate({
+                inputRange: [0 , 1],
+                outputRange: [0, 40]
+            })
         }],
-    }))
+    }
 
     return (
         <Animated.View style={[styles.main]} >
             <Animated.Text style={[styles.text, textStyle]}>Scratch</Animated.Text>
-            <TouchableOpacity onPress={() => navigation.goBack()}>
+            <TouchableOpacity disabled={isScratchable} onPress={() => navigation.goBack()}>
                 <Animated.View  style={[croixStyle, styles.croixContent]}>
-                    <AnimatedText start={0} end={store?.coins} style={styles.counter} />
+                    <AnimatedText start={0} end={store.coins} style={styles.counter} />
                     <Image style={styles.coinsIcon} source={require('../../assets/icons/coin.png')} />
                     <Image style={styles.croix} source={require('../../assets/icons/croix.png')} />
                 </Animated.View>

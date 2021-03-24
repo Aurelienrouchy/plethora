@@ -12,7 +12,7 @@ import Header from '../components/Header';
 import Play from '../views/Play';
 import { createSharedElementStackNavigator } from 'react-navigation-shared-element';
 import LotoGridView from '../views/LotoGridView';
-import ErrorDisplay from '../components/ErrorDisplay';
+import ErrorDisplay from '../components/MessageDisplay';
 import { useReward } from '../utils/ads';
 import { AdMobRewarded } from 'expo-ads-admob';
 
