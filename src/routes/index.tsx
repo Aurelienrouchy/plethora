@@ -4,17 +4,16 @@ import { enableScreens } from 'react-native-screens'
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator, StackCardInterpolationProps } from '@react-navigation/stack';
 
-import { useTicketStore, useUserStore } from '../utils/store';
+import { useUserStore } from '../utils/store';
 import SignIn from '../views/SignIn';
 import Home from '../views/Home';
-import Drawer from '../views/Drawer';
-import Header from '../components/Header';
 import Play from '../views/Play';
 import { createSharedElementStackNavigator } from 'react-navigation-shared-element';
 import LotoGridView from '../views/LotoGridView';
 import ErrorDisplay from '../components/MessageDisplay';
 import { useReward } from '../utils/ads';
 import { AdMobRewarded } from 'expo-ads-admob';
+import History from '../views/History';
 
 enableScreens();
   
@@ -25,6 +24,7 @@ const HomeRoutes = () => {
     return (
         <HomeStackShared.Navigator initialRouteName="Home" headerMode="none" mode="modal">
             <HomeStackShared.Screen name="Home" component={Home} />
+            <HomeStackShared.Screen name="History" component={History} />
             <HomeStackShared.Screen
                 name="Play"
                 component={Play}
@@ -82,9 +82,11 @@ const Router = () => {
             <ErrorDisplay />
             <NavigationContainer>
                 <Stack.Navigator headerMode="none" >
-                {/* { store.isLogin ? ( */}
-                { true ? (
-                    <Stack.Screen name="HomeRoutes" component={HomeRoutes} />
+                { store.isLogin ? (
+                    <>
+                        <Stack.Screen name="HomeRoutes" component={HomeRoutes} />
+                        <Stack.Screen name="History" component={History} />
+                    </>
                 ) : (
                     <Stack.Screen
                         name="SignIn"

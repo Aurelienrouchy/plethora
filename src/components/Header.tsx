@@ -3,7 +3,7 @@ import { View, StyleSheet, TouchableOpacity, Image, Dimensions, StatusBar } from
 import { useDispatch } from 'react-redux';
 import { toggleDrawer } from '../provider/app/app.actions';
 import Constants from 'expo-constants';
-import HeaderInfos from './HerderInfos';
+import HeaderInfos from './HeaderInfos';
 
 const { width, height } = Dimensions.get('screen');
 

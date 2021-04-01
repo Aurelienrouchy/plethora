@@ -11,16 +11,13 @@ const { width, height } = Dimensions.get('screen');
 
 interface DrawerProps {}
 
-const Drawer = ({
-    animation
-}: any) => {
+const Drawer = () => {
     const dispatch = useDispatch();
     const navigation = useNavigation();
     const userStore = useUserStore()
 
     const navigate = (route: string) => {
         setTimeout(() => navigation.navigate(route), 300);
-        // animation.value = animation.value ? 0 : 1;
         dispatch(toggleDrawer);
     };
     

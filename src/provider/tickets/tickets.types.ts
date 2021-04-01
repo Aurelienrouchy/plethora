@@ -1,7 +1,3 @@
-export const ADD_COINS = 'ADD_COINS';
-export const REMOVE_COINS = 'REMOVE_COINS';
-export const ADD_TREES = 'ADD_TREES';
-export const ADD_EXPERIENCES = 'ADD_EXPERIENCES';
 export const SET_IS_REWARD = 'SET_IS_REWARD';
 export const SET_TICKETS = 'SET_TICKETS';
 export const SET_ADS_VISIBLE = 'SET_ADS_VISIBLE';
@@ -10,25 +6,6 @@ export const SET_SCRATCH_VISIBLE = 'SET_SCRATCH_VISIBLE';
 export const SET_ADS_LOADING = 'SET_ADS_LOADING';
 
 // Actions
-
-interface AddCoinsAction {
-	type: typeof ADD_COINS;
-	coins: number;
-}
-interface RemoveCoinsAction {
-	type: typeof REMOVE_COINS;
-	coins: number;
-}
-
-interface AddTreesAction {
-	type: typeof ADD_TREES;
-	trees: number;
-}
-interface AddExperienceAction {
-	type: typeof ADD_EXPERIENCES;
-	exp: number;
-}
-
 interface SetAdsVisibleAction {
 	type: typeof SET_ADS_VISIBLE;
 	payload: boolean;
@@ -58,11 +35,7 @@ interface SetIsRewardAction {
 }
 
 export type ActionsType = 
-      AddCoinsAction
-    | RemoveCoinsAction
-    | AddExperienceAction
-    | AddTreesAction
-    | SetTicketsAction
+      SetTicketsAction
     | SetAdsVisibleAction
     | SetIsRewardAction
     | SetRewardVisibleAction
@@ -78,15 +51,14 @@ export type Tickets = {
     maxCoins: number,
     locked: boolean,
     scratchableBeforeUnlock: number,
-    image: string,
+    imageUrl: string,
+    imageFrontUrl: string,
+    imageBackUrl: string,
     progressColor: string
 }
 
 export interface TicketsStateType {
     tickets: Tickets[],
-    coins: number,
-    trees: number,
-    experiences: number,
     adsIsVisible: boolean,
     rewardIsVisible: boolean,
     scratchIsVisible: boolean,

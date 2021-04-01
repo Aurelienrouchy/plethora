@@ -18,7 +18,7 @@ const AnimatedText = React.memo(({
     duration = 1000,
     style
 }: AnimatedTextProps) => {
-    const count = useRef(new Animated.Value(0)).current;
+    const count = useRef(new Animated.Value(start)).current;
     const [val, setVal] = useState<string>(`${start}`);
 
     useEffect(() => {

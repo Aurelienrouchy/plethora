@@ -13,37 +13,7 @@ const { width, height } = Dimensions.get('screen');
 
 export default function Lotos() {
     const store = useLotosStore();
-    // const { loading, error, data, startPolling, stopPolling } = useQuery(GET_RAFFLES, {pollInterval: 5000 });
-    // const [raffles, setRaffles] = useState([]);
-
-    // useLayoutEffect(() => {
-    //     if (data) {
-    //         const res = raffles.map(raffle => {
-    //             const usersCount = (data.getRaffles.filter(dt => dt.price === raffle.price)[0] || {}).usersCount || 0;
-    //             return {
-    //                 ...raffle,
-    //                 usersCount
-    //             }
-    //         });
-    //         setRaffles(res)
-    //     }
-    //     startPolling(5000);
-    //     return stopPolling
-    // }, [data]);
-
-    // useEffect(() => {
-    //     if (lotos.length) {
-    //         Animated.stagger(
-    //             200,
-    //             lotos.map((raffle, index) => Animated.timing(raffle.translateY, {
-    //                 toValue: 0,
-    //                 duration: 500,
-    //                 useNativeDriver: true,
-    //             }))
-    //         ).start();
-    //     }
-    // }, [lotos])
-
+    
     return (
         <View style={styles.main}>
             <Text style={styles.title}>Lottery draws</Text>

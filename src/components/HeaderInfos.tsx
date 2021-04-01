@@ -9,10 +9,7 @@ const { width, height } = Dimensions.get('screen');
 
 const HeaderInfos = () => {
     const dispatch = useDispatch();
-    const store = useTicketStore();
-    const userStore = useUserStore();
-
-    const toggle = () => dispatch(toggleDrawer);
+    const store = useUserStore();
 
     return (
         <View style={styles.main}>
@@ -20,7 +17,7 @@ const HeaderInfos = () => {
             <Image style={styles.coinsIcon} source={require('../../assets/icons/coin.png')} />
             <AnimatedText start={0} end={store?.trees} style={styles.counter} />
             <Image style={styles.treesIcon} source={require('../../assets/icons/tree.png')} />
-            <Image style={styles.profil} source={{ uri: 'https://cdn.dribbble.com/users/674925/screenshots/14206502/media/2977da0f08e2f2890c6330cf8e8bd619.png' }} />
+            <Image style={styles.profil} source={{ uri: store.photoUrl }} />
         </View>
     );
 }

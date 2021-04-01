@@ -38,17 +38,17 @@ const Tickets = () => {
     return (
         <View style={styles.main}>
             <Text style={styles.title}>Scratch To Win Coins</Text>
-            <Text style={styles.subtitle}>Collect coins !</Text>
+            <Text style={styles.subtitle}>Collect coins to enter lottery draws!</Text>
             <PanGestureHandler onHandlerStateChange={handleStateChange}>
                 <View style={styles.scrollview}>
                 {
-                    tickets.map((tiket, index) => {
+                    tickets.map((ticket, index) => {
                         return (
                             <Ticket
-                                key={tiket.id}
+                                key={ticket.id}
                                 scrollXIndex={scrollIndex}                                        
                                 index={index}
-                                ticket={tiket}
+                                ticket={ticket}
                                 nextExp={store.tickets[index + 1]?.scratchableBeforeUnlock || 0}
                             />
                         )

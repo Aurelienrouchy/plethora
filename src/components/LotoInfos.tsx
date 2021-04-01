@@ -35,7 +35,7 @@ const LotoInfos = ({ loto, style }: LotoInfosProps) => {
                     style={styles.ticket}
                     pointerEvents="none"
                 >
-                        <Text style={styles.text}>{ loto?.tickets.length }</Text>
+                        <Text style={styles.text}>{ loto?.tickets?.length }</Text>
                         <Image style={styles.ticketIcon} source={require('../../assets/icons/ticket.png')} />
 
                 </View>

@@ -2,27 +2,18 @@ import React, { useEffect, useState } from 'react';
 import { Provider } from 'react-redux';
 import Router from './src/routes';
 import { store } from './src/utils/store';
-import AppLoading from 'expo-app-loading';
-import * as Font from 'expo-font';
-import { Image } from 'react-native';
+import { Image, LogBox, Text, View } from 'react-native';
 import { Asset } from 'expo-asset';
 
 import { ApolloProvider } from '@apollo/client';
-import { client } from './src/utils/graphql';
+import client from './src/utils/clientGraphQl';
 import { setupAds } from './src/utils/ads';
-import { getTickets } from './src/utils/query';
+import { getTickets, getLotos } from './src/utils/query';
 import { setTickets } from './src/provider/tickets/tickets.action';
 import { useFonts } from 'expo-font';
-
-function cacheImages(images: any[]) {
-	return images.map(image => {
-		if (typeof image === 'string') {
-			return Image.prefetch(image);
-		} else {
-			return Asset.fromModule(image).downloadAsync();
-		}
-	});
-}
+import { setLotos } from './src/provider/lotos/lotos.actions';
+import { showMessage } from './src/utils/message';
+import { cacheImagesAndBuild } from './src/utils/images';
 
 const images = [
 	require('./assets/icons/menu-dots.png'),
@@ -42,30 +33,45 @@ const fonts = {
 	CocogooseUltraThin: require('./assets/fonts/cocogoose_pro_ultralight.ttf'),
 }
 
+LogBox.ignoreLogs(['Remote debugger']);
 
 export default function App() {
 	const [isReady, setIsReady] = useState(false);
 	const [loaded] = useFonts(fonts);
 
 	setupAds();
-	const _loadAssetsAsync = async () => {
-		
-		const imageAssets: any = cacheImages(images);
-		
-		const tickets = await getTickets();
 
-		setTickets(tickets)
-		// await Font.loadAsync(fonts);
-		await Promise.all([...imageAssets]);
-	}
+	useEffect(() => {
+		const init = async () => {
+			
+			const ticketsFormServer = await getTickets();
+			const lotosFromServer = await getLotos();
+
+			if (!ticketsFormServer || !lotosFromServer) {
+				showMessage("Error server")
+				return
+			}
+
+			setTickets(await cacheImagesAndBuild({ items: ticketsFormServer}))
+			setLotos(await cacheImagesAndBuild({ items: lotosFromServer }));
+
+			setIsReady(true)
+		}
+		init();
+	}, [])
 
 	if (!isReady || !loaded) {
 		return (
-			<AppLoading
-				startAsync={_loadAssetsAsync}
-				onFinish={() => setIsReady(true)}
-				onError={console.warn}
-			/>
+			<View>
+				<Text>Prout</Text>
+				<Text>Prout</Text>
+				<Text>Prout</Text>
+				<Text>Prout</Text>
+				<Text>Prout</Text>
+				<Text>Prout</Text>
+				<Text>Prout</Text>
+				<Text>Prout</Text>
+			</View>
 		);
 	}
 	

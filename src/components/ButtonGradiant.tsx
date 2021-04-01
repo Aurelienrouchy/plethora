@@ -1,5 +1,5 @@
 import React, { Children, memo, ReactElement, useEffect, useMemo, useState } from 'react';
-import { StyleSheet, TouchableOpacity, View, Animated, ViewProps, Dimensions} from 'react-native';
+import { StyleSheet, TouchableHighlight, Animated, ViewProps, Dimensions} from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 
 import { useTiming } from '../utils/hooks';
@@ -15,34 +15,29 @@ interface ButtonProps {
     onPress?: () => void;
 }
 
-const Button = ({ children, onPress, style, color, gradiantColors }: ButtonProps) => {
+const ButtonGradiant = ({ children, onPress, style, color, gradiantColors }: ButtonProps) => {
     const child = Children.only(children);
-    const {
-        animatedStyle 
-    } = useMemo(() => {
-        const translateX = new Animated.Value(-WIDTH_RAFFLE);
+    const translateX = new Animated.Value(-WIDTH_RAFFLE);
+    const animatedStyle = {
+        transform: [{
+            translateX
+        }, {rotate: '45deg'}]
+    };
 
-        for(let i = 0; i < 3; i++) {
-            setTimeout(() => {
-                    Animated.timing(translateX, {
-                        toValue: WIDTH_RAFFLE,
-                        duration: 1000,
-                        useNativeDriver: true
-                    }).start(() => translateX.setValue(-WIDTH_RAFFLE))
-            }, i * 1000)
-        }
-        const animatedStyle = {
-            transform: [{
-                translateX
-            }, {rotate: '45deg'}]
-        }
-        return {
-            animatedStyle
-        }
-    }, []);
+    useEffect(() => {
+        const interval = setInterval(() => {
+            Animated.timing(translateX, {
+                toValue: WIDTH_RAFFLE,
+                duration: 1000,
+                useNativeDriver: true
+            }).start(() => translateX.setValue(-WIDTH_RAFFLE))
+        }, 1000);
+
+        return () => clearInterval(interval)
+    }, [onPress])
 
     return (
-        <TouchableOpacity style={style} onPress={onPress}>
+        <TouchableHighlight underlayColor="#fff" style={[styles.main, style]} onPress={onPress} >
             <LinearGradient
                 colors={gradiantColors}
                 style={styles.gradiant}
@@ -52,13 +47,17 @@ const Button = ({ children, onPress, style, color, gradiantColors }: ButtonProps
             <Animated.View style={[styles.mask, { backgroundColor: color }, animatedStyle]}/>
                 { child }
             </LinearGradient>
-        </TouchableOpacity>
+        </TouchableHighlight>
     );
 };
 
-export default memo(Button);
+export default ButtonGradiant;
 
 const styles = StyleSheet.create({
+    main: {
+        overflow: 'hidden',
+        borderRadius: 20,
+    },
     buttonText: {
         fontSize: 16,
         fontFamily: 'CocogooseRegular'
@@ -68,10 +67,12 @@ const styles = StyleSheet.create({
         height: '100%',
         borderRadius: 20,
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
+        overflow: 'hidden',
     },
     mask: {
         ...StyleSheet.absoluteFillObject,
+        overflow: 'hidden',
         top: '-170%',
         width: '50%',
         height: '400%',

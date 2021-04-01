@@ -3,7 +3,7 @@ import React from 'react';
 import { StyleSheet, View, TouchableOpacity, Image, Text } from 'react-native';
 import { SharedElement } from 'react-navigation-shared-element';
 import { loto } from '../provider/lotos/lotos.types';
-import { useTicketStore } from '../utils/store';
+import { useUserStore } from '../utils/store';
 import LotoInfos from './LotoInfos';
 
 interface LotoProps {
@@ -12,7 +12,7 @@ interface LotoProps {
 
 const Loto = ({ loto }: LotoProps) => {
     const navigation = useNavigation();
-    const store = useTicketStore();
+    const store = useUserStore();
     const onClick = () => navigation.navigate('LotoGridView', { loto, id: loto.id });
     const isLocked = loto.cost > store.coins;
 
@@ -20,13 +20,15 @@ const Loto = ({ loto }: LotoProps) => {
         <View style={[styles.main]}>
             <TouchableOpacity style={styles.touch} disabled={isLocked} onPress={ () => onClick() } >
                 <SharedElement style={styles.imageContainer} id={`loto.${loto?.id}.image`}>
-                    <Image resizeMode="cover" style={[styles.imageContainer, styles.image]} source={loto?.imageUrl} />
+                    <Image resizeMode="cover" style={[styles.imageContainer, styles.image]} source={{ uri: loto.imageUrl }} />
                 </SharedElement>
                 <LotoInfos loto={loto} style={styles.infos}/>
                 {
                     isLocked ? (
                         <View style={styles.locked}>
-                            <Text style={styles.locked_text}>locked</Text>
+                            <Text style={styles.locked_text_number}>{loto.cost} </Text>
+                            <Text style={styles.locked_text_coins}>coins</Text>
+                            <Text style={styles.locked_text}> to unlock</Text>
                         </View>
                     ) : null
                 }
@@ -96,11 +98,22 @@ const styles = StyleSheet.create({
         opacity: 0.5,
         borderRadius: 20,
         zIndex: 2,
+        flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
     },
+    locked_text_number: {
+        fontSize: 33,
+        color: '#f6aa1f',
+        fontFamily: 'CocogooseRegular'
+    },
+    locked_text_coins: {
+        fontSize: 23,
+        color: '#f6aa1f',
+        fontFamily: 'CocogooseRegular'
+    },
     locked_text: {
-        fontSize: 50,
+        fontSize: 23,
         color: '#fff',
         fontFamily: 'CocogooseRegular'
     }

@@ -1,25 +1,18 @@
 import { useNavigation } from '@react-navigation/native';
 import React, { useEffect } from 'react';
-import { StyleSheet, Image, TouchableOpacity, Text, Dimensions, View, Animated} from 'react-native';
+import { StyleSheet, Image, Text, Dimensions, View, Animated } from 'react-native';
 import { SharedElement } from 'react-navigation-shared-element';
+import { Tickets } from '../provider/tickets/tickets.types';
 
 import { useTiming } from '../utils/hooks';
-import { useTicketStore } from '../utils/store';
-import Button from './Button';
+import { useTicketStore, useUserStore } from '../utils/store';
+import ButtonGradiant from './ButtonGradiant';
+import ButtonScale from './ButtonScale';
 
 const { width, height } = Dimensions.get('screen');
 const WIDTH_RAFFLE = width / 1.8;
 interface TicketProps {
-    ticket: {
-        id: number;
-        level: number;
-        minCoins: number;
-        maxCoins: number;
-        locked: boolean
-        scratchableBeforeUnlock: number;
-        image: string;
-        progressColor: string;
-    }
+    ticket: Tickets;
     index: number;
     scrollXIndex: any;
     nextExp: number;
@@ -27,7 +20,7 @@ interface TicketProps {
 
 const Ticket = ({ ticket, index, scrollXIndex, nextExp}: TicketProps) => {
     const navigation = useNavigation();
-    const store = useTicketStore();
+    const store = useUserStore();
     
     const onClick = () => navigation.navigate('Play', { ticket });
     const inputRange = [index - 1, index, index + 1];
@@ -46,29 +39,31 @@ const Ticket = ({ ticket, index, scrollXIndex, nextExp}: TicketProps) => {
     const pct = pctExp > 100 ? 100 : pctExp < 0 ? 0 : pctExp;
 
     return (
-        <Animated.View style={[{backgroundColor: ticket.progressColor, zIndex: 100 - index}, styles.main, style]} >
-            <TouchableOpacity style={styles.touch} disabled={isLocked} onPress={ () => onClick() } >
-                <SharedElement id={`item.${ticket.id}.image`}>
-                    <Image style={styles.image} source={{uri: ticket.image}} />
-                </SharedElement>
-                <View style={styles.min_max_container}>
-                    <Text style={styles.min_max}>{ticket?.minCoins} - {ticket?.maxCoins}</Text>
-                    <Image style={styles.coinsIcon} source={require('../../assets/icons/coin.png')} />
-                </View>
-                {/* <View style={[{borderColor: ticket.progressColor}, styles.progress_bar]}>
-                    <Animated.View style={[{backgroundColor: ticket.progressColor, width: `${pct}%`}, styles.progress]}></Animated.View>
-                </View> */}
-                <Button style={styles.button} onPress={() => onClick()} gradiantColors={['#fdad02', '#ffd301']} color="#ffcd01">
-                    <Text style={styles.buttonText}>SCRATCH NOW</Text>
-                </Button>
-                {
-                    isLocked ? (
-                        <View style={styles.locked}>
-                            <Text style={styles.locked_text}>locked</Text>
-                        </View>
-                    ) : null
-                }
-            </TouchableOpacity>
+        <Animated.View style={[{zIndex: 100 - index}, styles.main, style]} >
+            <ButtonScale style={styles.touch} disabled={isLocked} onPress={ () => onClick() } >
+                <>
+                    <SharedElement id={`item.${ticket.id}.image`}>
+                        <Image style={styles.image} source={{uri: ticket.imageUrl }} />
+                    </SharedElement>
+                    <View style={styles.min_max_container}>
+                        <Text style={styles.min_max}>{ticket?.minCoins} - {ticket?.maxCoins}</Text>
+                        <Image style={styles.coinsIcon} source={require('../../assets/icons/coin.png')} />
+                    </View>
+                    {/* <View style={[{borderColor: ticket.progressColor}, styles.progress_bar]}>
+                        <Animated.View style={[{backgroundColor: ticket.progressColor, width: `${pct}%`}, styles.progress]}></Animated.View>
+                    </View> */}
+                    <ButtonGradiant style={styles.button} onPress={() => onClick()} gradiantColors={['#fdad02', '#ffd301']} color="#ffcd01">
+                        <Text style={styles.buttonText}>SCRATCH NOW</Text>
+                    </ButtonGradiant>
+                    {
+                        isLocked ? (
+                            <View style={styles.locked}>
+                                <Text style={styles.locked_text}>locked</Text>
+                            </View>
+                        ) : null
+                    }
+                </>
+            </ButtonScale>
         </Animated.View>
     );
 };
@@ -87,6 +82,7 @@ const styles = StyleSheet.create({
         height: WIDTH_RAFFLE,
         borderRadius: 20,
         overflow: 'hidden',
+        backgroundColor: 'transparent'
     },
     touch: {
         width: '100%',
@@ -149,7 +145,6 @@ const styles = StyleSheet.create({
     },
     locked: {
         ...StyleSheet.absoluteFillObject,
-        backgroundColor: '#000',
         opacity: 0.5,
         justifyContent: 'center',
         alignItems: 'center',

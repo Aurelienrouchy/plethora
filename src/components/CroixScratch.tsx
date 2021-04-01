@@ -1,8 +1,8 @@
 import { useNavigation } from '@react-navigation/native';
-import React, { useMemo } from 'react';
+import React from 'react';
 import { StyleSheet, TouchableOpacity, Dimensions, Image, Animated } from 'react-native';
 import { useTiming } from '../utils/hooks';
-import { useTicketStore } from '../utils/store';
+import { useUserStore } from '../utils/store';
 import AnimatedText from './AnimatedText';
 
 const { width, height } = Dimensions.get('screen');
@@ -12,7 +12,7 @@ interface CroixScratchProps {
 
 const CroixScratch = ({ isScratchable }: CroixScratchProps) => {
     const navigation = useNavigation();
-    const store = useTicketStore();
+    const store = useUserStore();
 
     const animation = useTiming(isScratchable)
     const croixStyle = {
@@ -36,7 +36,7 @@ const CroixScratch = ({ isScratchable }: CroixScratchProps) => {
         transform: [{ 
             translateY: animation.interpolate({
                 inputRange: [0 , 1],
-                outputRange: [0, 40]
+                outputRange: [0, 37]
             })
         }],
     }
@@ -46,7 +46,7 @@ const CroixScratch = ({ isScratchable }: CroixScratchProps) => {
             <Animated.Text style={[styles.text, textStyle]}>Scratch</Animated.Text>
             <TouchableOpacity disabled={isScratchable} onPress={() => navigation.goBack()}>
                 <Animated.View  style={[croixStyle, styles.croixContent]}>
-                    <AnimatedText start={0} end={store.coins} style={styles.counter} />
+                    <AnimatedText start={store.coins} end={store.coins} style={styles.counter} />
                     <Image style={styles.coinsIcon} source={require('../../assets/icons/coin.png')} />
                     <Image style={styles.croix} source={require('../../assets/icons/croix.png')} />
                 </Animated.View>
@@ -67,9 +67,8 @@ const styles = StyleSheet.create({
         zIndex: 20,
         backgroundColor: '#fff',
         justifyContent: 'flex-end',
-        // flexDirection: 'row',
         alignItems: 'flex-end',
-        borderRadius: 10,
+        borderRadius: 20,
         overflow: 'hidden',
     },
     croixContent: {
@@ -83,13 +82,14 @@ const styles = StyleSheet.create({
         height: 30
     },
     text: {
-        fontSize: 36,
+        fontSize: 26,
         width: '100%',
         textAlign: 'center',
-        // fontFamily: 'MontserratM'
+        fontFamily: 'CocogooseRegular'
     },
     counter: {
         fontSize: 24,
+        fontFamily: 'CocogooseRegular'
     },
     coinsIcon: {
         width: 40,

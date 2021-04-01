@@ -11,7 +11,7 @@ interface LotoNumberProps {
 }
 
 const LotoNumber = ({ isSelected, number, onPress }: LotoNumberProps) => {
-    const animation = useTiming(isSelected);
+    const animation = useTiming(isSelected, { duration: 200 });
     const style = {
         opacity: animation.interpolate({ inputRange: [0, 1], outputRange: [0.3, 1]}),
         shadowColor: "#000",
@@ -40,8 +40,8 @@ const LotoNumber = ({ isSelected, number, onPress }: LotoNumberProps) => {
 
 const styles = StyleSheet.create({
     main: {
-        width: (width - 60) / 6,
-        height: (width - 60) / 6,
+        width: (width - 60) / 8,
+        height: (width - 60) / 8,
         padding: 4,
     },
     boule: {
@@ -52,7 +52,8 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     text: {
-        fontSize: 22,
+        fontSize: 18,
+        fontFamily: 'CocogooseSemilight',
     },
     mask: {
         ...StyleSheet.absoluteFillObject,

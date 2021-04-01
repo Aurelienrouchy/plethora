@@ -5,7 +5,7 @@ import {
   } from 'expo-ads-admob';
 import { setAdsVisible, setAdsLoading, setScratchVisible, setIsReward } from '../provider/tickets/tickets.action';
 import { store as ticketsStore } from './store';
-import { showError } from './message';
+import { showMessage } from './message';
   
 export const useReward = () => 
     useMemo(() => {
@@ -21,14 +21,11 @@ export const useReward = () =>
                     // throw Error('fgsrdht', err);
                 });
                 AdMobRewarded.addEventListener('rewardedVideoDidClose', () => {
-                    console.log('close')
                     if(store.isReward) {
                         setScratchVisible(true);
                     }
                     setAdsLoading(true);
                     setAdsVisible(false);
-                    console.log('end-close')
-
                     requestAd();
                 });
                 AdMobRewarded.addEventListener('rewardedVideoDidRewardUser', () => {
@@ -57,7 +54,7 @@ export const showAd = async () => {
     try {
         await AdMobRewarded.showAdAsync()
     } catch (err) {
-        showError(err.message)
+        showMessage(err.message)
     }
 };
 
@@ -68,7 +65,7 @@ export const requestAd = async () => {
         setAdsLoading(false);
     } catch (err) {
         setAdsLoading(false)
-        showError(err.message)
+        showMessage(err.message)
     }
 };
 

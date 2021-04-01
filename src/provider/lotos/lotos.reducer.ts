@@ -2,25 +2,26 @@ import { state as initialState } from './lotos.state';
 import { 
     LotosStateType,
     ActionsType,
-    ADD_LOTO_GRID,
+    PARTICIPATE_LOTO,
     RESET_LOTOS,
-    SETUP_LOTOS,
-    SET_LOTO_LOADING
+    SET_LOTOS,
+    SET_LOTO_LOADING,
+    SHOW_VALIDATION
 } from './lotos.types';
 
 export const LotosReducer = (state: LotosStateType = initialState, action: ActionsType) => {
     switch (action.type) {
-        case ADD_LOTO_GRID: {
-            const id = action.payload.id;
-            const numbers = action.payload.numbers
-            const lotos = state.lotos.map(lt => {
-                if (lt.id === id) {
+        case PARTICIPATE_LOTO: {
+            const ticket = action.payload;
+            console.log('reducer', ticket)
+            const lotos = state.lotos.map(loto => {
+                if (loto.id === ticket.lotoId) {
                     return {
-                        ...lt,
-                        tickets: [...lt.tickets, numbers]
+                        ...loto,
+                        tickets: [...loto.tickets, ticket]
                     }
                 }
-                return lt
+                return loto
             })
             return {
                 ...state,
@@ -34,7 +35,7 @@ export const LotosReducer = (state: LotosStateType = initialState, action: Actio
                 lotos
             };
         }
-        case SETUP_LOTOS: {
+        case SET_LOTOS: {
             return {
                 ...state,
                 lotos: action.lotos
@@ -44,6 +45,12 @@ export const LotosReducer = (state: LotosStateType = initialState, action: Actio
             return {
                 ...state,
                 loading: action.payload
+            }
+        }
+        case SHOW_VALIDATION: {
+            return {
+                ...state,
+                showValidation: action.payload
             }
         }
         default:

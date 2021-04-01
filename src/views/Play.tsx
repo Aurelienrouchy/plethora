@@ -1,56 +1,61 @@
-import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, Dimensions, Image, Animated } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import { StyleSheet, View, Dimensions, Image, Animated, Text } from 'react-native';
 import { SharedElement } from 'react-navigation-shared-element';
+import LottieView from 'lottie-react-native';
 import CroixScratch from '../components/CroixScratch';
-import PlayButton from '../components/PlayButton';
+import ButtonPlay from '../components/ButtonPlay';
 import { useTicketStore } from '../utils/store';
 import { showAd } from '../utils/ads';
 import Scratch from '../components/Scratch';
 import { Tickets } from '../provider/tickets/tickets.types';
-import { addCoins, addExperiences, setIsReward } from '../provider/tickets/tickets.action';
+import { setIsReward, setRewardVisible } from '../provider/tickets/tickets.action';
+import { addCoins, addExperiences } from '../provider/user/user.actions';
 import { useTiming } from '../utils/hooks';
+import { getScratchNumbers } from '../utils/mutation';
+import { GET_SCRATCH_NUMBERS } from '../utils/schemaGraphQl';
 
 const { width, height } = Dimensions.get('screen');
 
 const Play = ({ route }) => {
+    const ticket: Tickets = route.params.ticket;
+    const store = useTicketStore();
+    const isReward = store.isReward;
+    
     const [isScratched, setIsScratched] = useState<boolean>(false);
     const [isScratchVisible, setIsScratchVisible] = useState<boolean>(false);
-    const [data, setData] = useState<number[]>([12, 45, 29, 90, 0]);
-    const ticket: Tickets = route.params.ticket
-    const store = useTicketStore();
+    const [coins, setCoins] = useState<number>(0);
+    const [numbers, setNumbers] = useState<number[]>([]);
+    const lottie = useRef<any>(null);
+    
     const animation = useTiming(isScratched)
+    const animationReward = useTiming(store.rewardIsVisible);
     const scratchStyle = {
         opacity: animation.interpolate({ inputRange: [0, 1], outputRange: [0, 1]}),
         transform: [{
             translateY: animation.interpolate({ inputRange: [0, 1], outputRange: [-height, 0]})
         }]
     }
+    const animatedRewardStyle = {
+        opacity: animationReward.interpolate({ inputRange: [0, 1], outputRange: [0, 1]}),
+        transform: [{
+            translateY: animationReward.interpolate({ inputRange: [0, 1], outputRange: [-height, 0]})
+        }]
+    };
+
+    const openTicket = () => {
+        setIsScratched(true);
+        setTimeout(() => setIsScratchVisible(true), 400)
+    }
+    const closeTicket = () => {
+        setIsScratched(false);
+        setTimeout(() => setIsScratchVisible(false), 400)
+    }
 
     useEffect(() => {
         if (!store.adsIsVisible && store.isReward) {
-            // if (called) refetch();
-            // else getTicket();
-            setIsScratchVisible(true);
-            setTimeout(() => setIsScratched(true), 400)
+            openTicket()
         }
     }, [store.adsIsVisible, store.isReward]);
-
-    
-    // const [getTicket, { called, loading, data, refetch }] = useLazyQuery(GET_TICKET);
-    // const { dispatch: dispatchMain, state: MainState } = useContext(Context); 
-    // useEffect(() => {
-    //     if (!rewardState.isAdsVisible && rewardState.isReward) {
-    //         if (called) refetch();
-    //         else getTicket();
-    //         setIsScratched(true);
-    //     }
-    // }, [rewardState.isAdsVisible, rewardState.isReward])
-
-    //
-    // const showWinCoinModal = () => {
-    //     setIsModalVisible(true);
-    //     setTimeout(() => setIsModalVisible(false), 3000);
-    // };
 
     const play = () => {
         if (!store.adsLoading) {
@@ -58,31 +63,74 @@ const Play = ({ route }) => {
         }
     };
 
-    const onFinishScratch = (coins) => {
-        setIsScratched(false);
-        setTimeout(() => setIsScratchVisible(false), 400)
-        setIsReward(false);
-        addCoins(10);
-        addExperiences(10)
+    const [isLoadingTicketNumber, setIsLoadingTicketNumber] = useState(false);
+ 
+    useEffect(() => {
+        if (store.isReward) {
+            const fetchData = async () => {
+                setIsLoadingTicketNumber(true);
+            
+                const result = await getScratchNumbers(`${ticket.id}`)
+                
+                if(result) {
+                    setCoins(result.coins);
+                    setNumbers(result.numbers);
+                }   
+                
+                setIsLoadingTicketNumber(false);
+            };
+            
+            fetchData();
+        }
+        
+    }, [store.isReward]);
 
-        // dispatchMain({type: 'UPADATE_COINS', coins})
-        // showWinCoinModal();
+    const onFinishScratch = () => {
+        closeTicket()
+
+        addCoins(coins);
+        addExperiences(10);
+
+        setRewardVisible(true);
+        setIsReward(false);
+
+        lottie.current.play();
+
+        setTimeout(() => {
+            lottie?.current?.reset();
+            setRewardVisible(false);
+        }, 2000);
     };
 
     return (
         <View style={styles.container}>
             <View style={styles.main}>
-                {
-                    isScratchVisible && 
-                    <Animated.View style={[scratchStyle, styles.scratch]} >
-                        <Scratch data={data} ticket={ticket} onFinish={onFinishScratch}/>
-                    </Animated.View>
-                }
+            {
+                (isScratchVisible && !isLoadingTicketNumber) && 
+                <Animated.View style={[scratchStyle, styles.scratch]} >
+                    <Scratch data={numbers} ticket={ticket} onFinish={onFinishScratch}/>
+                </Animated.View>
+            }
+                <Animated.View style={[animatedRewardStyle, styles.rewardIsVisible]} >
+                    <LottieView
+                        ref={lottie}
+                        style={[styles.lottie]}
+                        source={require('../../assets/icons/coins.json')}
+                    />
+                    <View style={styles.containerText}>
+                        <Text style={styles.rewardTextCongrat}>Congrats!</Text>
+                        <Text style={styles.rewardTextEarn}>you earned: </Text>
+                        <View style={styles.containerCoins}>
+                            <Text style={styles.rewardText}>{coins}</Text>
+                            <Text style={styles.rewardTextEarn}> coins</Text>
+                        </View>
+                    </View>
+                </Animated.View>
                 <SharedElement id={`item.${ticket.id}.image`}>
-                    <Image resizeMode="cover" style={styles.image} source={{uri: ticket.image}} />
+                    <Image resizeMode="cover" style={styles.image} source={{uri: ticket.imageUrl }} />
                 </SharedElement>
                 <CroixScratch isScratchable={isScratched} />
-                <PlayButton style={styles.buttonPlay} loading={store.adsLoading} onPress={play} isScratchable={isScratched}/>
+                <ButtonPlay style={styles.buttonPlay} loading={store.adsLoading} onPress={play} isScratchable={isScratched}/>
             </View>
         </View>
     );
@@ -111,10 +159,6 @@ const styles = StyleSheet.create({
         top: height / 3 * 2,
         width: '100%',
         alignItems: 'center'
-    },
-    textPlay: {
-        fontSize: 36,
-        fontFamily: 'MontserratM'
     },
     loader: {
         width: 60,
@@ -174,5 +218,46 @@ const styles = StyleSheet.create({
         width,
         height,
         zIndex: 1,
+    },
+    rewardIsVisible: {
+        ...StyleSheet.absoluteFillObject,
+        top: height / 3,
+        left: width / 2 / 2 - 35,
+        width: width / 2 + 70,
+        height: 200,
+        backgroundColor: 'rgba(255, 255, 255, 1)',
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 20,
+        zIndex: 1,
+    },
+    lottie: {
+        width: width * 2,
+    },
+    containerText: {
+        ...StyleSheet.absoluteFillObject,
+        top: 20
+    },
+    containerCoins: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        flexDirection: 'row'
+    },
+    rewardText: {
+        textAlign: 'center',
+        fontSize: 80,
+        fontFamily: 'CocogooseRegular',
+        color: '#ffca26',
+    },
+    rewardTextEarn: {
+        textAlign: 'center',
+        fontSize: 18,
+        opacity: 0.5,
+        fontFamily: 'CocogooseRegular',
+    },
+    rewardTextCongrat: {
+        textAlign: 'center',
+        fontSize: 30,
+        fontFamily: 'CocogooseRegular',
     }
 });

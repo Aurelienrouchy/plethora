@@ -17,10 +17,9 @@ const LotoButtons = ({ onPressRandom, onPressValidate}: LotoButtonsProps) => {
         <View style={styles.main}>
             <TouchableOpacity style={[styles.button, styles.buttonRandom]} onPress={onPressRandom}>
                 <Image style={styles.icon} source={require('../../assets/icons/shuffle.png')} />
-                <Text style={styles.text}>Random</Text>
             </TouchableOpacity>
             <TouchableOpacity style={[styles.button, styles.buttonValidate]} onPress={onPressValidate}>
-                <LoadingTextButton loading={store.loading} text="Validate" style={styles.text} />
+                <LoadingTextButton loading={store.loading} text="ENTER" style={styles.text} />
             </TouchableOpacity>
         </View>
     );
@@ -35,20 +34,18 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         backgroundColor: '#fcd286',
         marginLeft: 30,
-        // overflow: 'hidden',
     },
     button: {
-        width: '50%',
         height: '100%',
         justifyContent: 'center',
         alignItems: 'center',
         flexDirection: 'row',
     },
     buttonRandom: {
-        width: '36%',
+        width: '30%',
     },
     buttonValidate: {
-        width: '64%',
+        width: '70%',
         backgroundColor: '#ffb632',
         borderRadius: 20,
         shadowColor: "#000",
@@ -67,7 +64,8 @@ const styles = StyleSheet.create({
         marginRight: 10
     },
     text: {
-        fontSize: 18
+        fontSize: 18,
+        fontFamily: 'CocogooseRegular'
     }
 })
 

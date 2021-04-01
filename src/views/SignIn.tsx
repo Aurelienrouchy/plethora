@@ -1,9 +1,11 @@
 import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { StyleSheet, View, TouchableOpacity, Text, Dimensions, Animated } from 'react-native';
 import LottieView from 'lottie-react-native';
-import { signWithFacebook, signWithGoogle } from '../utils/authentification';
+import { BlurView } from 'expo-blur';
+import { authentification, signWithFacebook, signWithGoogle } from '../utils/authentification';
 import { useUserStore } from '../utils/store';
 import { useTiming } from '../utils/hooks';
+import BlurEffectImage from '../components/BlurEffectImage';
 
 const { width, height } = Dimensions.get('screen');
 
@@ -24,8 +26,8 @@ const { width, height } = Dimensions.get('screen');
     }, [store.loading])
 
     useEffect(() => {
-        lottie.current.play()
-    })
+        lottie.current.play();
+    });
 
     return (
         <View style={styles.main}>
@@ -36,10 +38,10 @@ const { width, height } = Dimensions.get('screen');
                     source={require('../../assets/icons/lottie_play.json')}
                 />
             </Animated.View>
-            <TouchableOpacity style={styles.button} onPress={() => signWithFacebook()}>
+            <TouchableOpacity style={styles.button} onPress={() => authentification('facebook')}>
                 <Text style={styles.text}>Connect with Facebook</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.button} onPress={() => signWithGoogle()}>
+            <TouchableOpacity style={styles.button} onPress={() => authentification('google')}>
                 <Text style={styles.text}>Connect with Google</Text>
             </TouchableOpacity>
         </View>
@@ -53,7 +55,7 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'flex-end',
         paddingBottom: 100,
-        backgroundColor: '#262B4E',
+        backgroundColor: '#fff',
         paddingHorizontal: 30,
     },
     button: {

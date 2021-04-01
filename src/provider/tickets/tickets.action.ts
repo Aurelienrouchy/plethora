@@ -1,7 +1,4 @@
 import {
-    ADD_COINS,
-    REMOVE_COINS,
-    ADD_TREES,
     SET_ADS_VISIBLE,
     SET_REWARD_VISIBLE,
     SET_SCRATCH_VISIBLE,
@@ -9,29 +6,8 @@ import {
 	Tickets,
 	SET_TICKETS,
 	SET_IS_REWARD,
-	ADD_EXPERIENCES,
 } from './tickets.types';
 import { store } from '../../utils/store';
-
-export const addCoins = (coins: number) => store.dispatch({
-	type: ADD_COINS,
-	coins
-})
-
-export const removeCoins = (coins: number) => store.dispatch({
-	type: REMOVE_COINS,
-	coins
-})
-
-export const addExperiences = (exp: number) => store.dispatch({
-	type: ADD_EXPERIENCES,
-	exp
-})
-
-export const addTrees = (trees: number) => store.dispatch({
-	type: ADD_TREES,
-	trees
-})
 
 export const setTickets = (tickets: Tickets[]) => store.dispatch({
 	type: SET_TICKETS,

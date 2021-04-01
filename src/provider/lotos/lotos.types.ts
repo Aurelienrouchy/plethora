@@ -1,44 +1,57 @@
-export const ADD_LOTO_GRID = 'ADD_LOTO_GRID';
+export const PARTICIPATE_LOTO = 'PARTICIPATE_LOTO';
 export const RESET_LOTOS = 'RESET_LOTOS';
-export const SETUP_LOTOS = 'SETUP_LOTOS';
+export const SET_LOTOS = 'SET_LOTOS';
 export const SET_LOTO_LOADING = 'SET_LOTO_LOADING';
+export const SHOW_VALIDATION = 'SHOW_VALIDATION';
 
 // State
 
+export type lotoTicket = {
+    id: string;
+    classic: number[];
+    coins: number;
+    complementary: number[];
+    lotoId: string;
+    userId: string;
+}
+
 export type loto = {
-    id: number;
+    id: string;
     title: string;
     cost: number;
-    imageUrl: number;
+    imageUrl: string;
     timer: number;
     lotoNumbers: number;
     lotoComplementary: number;
-    maxNumber: number;
+    maxNumbers: number;
     maxComplementary: number;
-    tickets: number[][];
+    tickets: lotoTicket[];
 }
 
 export interface LotosStateType {
     loading: boolean;
-    lotos: loto[]
+    lotos: loto[];
+    showValidation: boolean;
 }
 
 // Actions
 
-interface AddLotoGridAction {
-	type: typeof ADD_LOTO_GRID;
-	payload: {
-        id: number;
-        numbers: number[]
-    };
+interface ParticipateLotoAction {
+	type: typeof PARTICIPATE_LOTO;
+	payload: lotoTicket
 }
 
 interface ResetLotosAction {
 	type: typeof RESET_LOTOS;
 }
 
-interface SetupLotosAction {
-	type: typeof SETUP_LOTOS;
+interface ShowValidationAction {
+	type: typeof SHOW_VALIDATION;
+    payload: boolean;
+}
+
+interface SetLotosAction {
+	type: typeof SET_LOTOS;
     lotos: loto[]
 }
 interface SetLotoLoadingAction {
@@ -47,8 +60,9 @@ interface SetLotoLoadingAction {
 }
 
 export type ActionsType = 
-      AddLotoGridAction
+      ParticipateLotoAction
+    | ShowValidationAction
     | ResetLotosAction
-    | SetupLotosAction
+    | SetLotosAction
     | SetLotoLoadingAction;
 

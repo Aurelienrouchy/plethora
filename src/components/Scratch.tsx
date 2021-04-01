@@ -20,7 +20,7 @@ export default function Scratch({ ticket, onFinish, data }: ScratchProps) {
     const [html, setHtml] = useState('');
 
     useLayoutEffect(() => {
-        // if (data) {
+        if (data) {
             const position = {
                 0: {
                     x: width / 2 - 35,
@@ -74,7 +74,7 @@ export default function Scratch({ ticket, onFinish, data }: ScratchProps) {
             `;
 
             ready && el.current.injectJavaScript(js);
-        // }
+        }
 
     }, [ready, data]);
 
@@ -93,8 +93,8 @@ export default function Scratch({ ticket, onFinish, data }: ScratchProps) {
                             brushSrc: './images/brush.png',
                             containerWidth: ${width},
                             containerHeight: ${height},
-                            imageForwardSrc: 'https://images.unsplash.com/photo-1567653418876-5bb0e566e1c2?ixlib=rb-1.2.1&ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&auto=format&fit=crop&w=1000&q=80',
-                            imageBackgroundSrc: 'https://images.unsplash.com/photo-1545487749-bdd172ea3df1?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=934&q=80',
+                            imageForwardSrc: '${ticket.imageFrontUrl}',
+                            imageBackgroundSrc: '${ticket.imageBackUrl}',
                             clearZoneRadius: 30,
                             percentToFinish: 20,
                             nPoints: 30,

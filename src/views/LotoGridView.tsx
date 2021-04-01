@@ -7,9 +7,13 @@ import { selectXNumberInArray } from '../utils/math';
 import LotoButtons from '../components/LotoButtons';
 import LotoInfos from '../components/LotoInfos';
 import LotoTicketsHistory from '../components/LotoTicketsHistory';
-import { participate } from '../utils/loto';
-import { useLotosStore } from '../utils/store';
+import { participateLoto } from '../utils/loto';
+import { useLotosStore, useTicketStore, useUserStore } from '../utils/store';
 import { showMessage } from '../utils/message';
+import LotoDisplayNumbers from '../components/LotoDisplayNumbers';
+import LotoValidation from '../components/LotoValidation';
+import Popup from '../components/Popup';
+import { showAd } from '../utils/ads';
 
 const { width, height } = Dimensions.get('screen');
 
@@ -20,6 +24,8 @@ interface ChooseNumbersLotoProps {
 const ChooseNumbersLoto = ({ route }: ChooseNumbersLotoProps) => {
     const { id } = route.params;
     const store = useLotosStore();
+    const userStore = useUserStore();
+    const ticketStore = useTicketStore();
     const loto = store.lotos.filter(lt => lt.id === id)[0];
     const navigation = useNavigation();
     
@@ -53,27 +59,44 @@ const ChooseNumbersLoto = ({ route }: ChooseNumbersLotoProps) => {
     }
 
     const random = () => {
-        setSelectedClassic(selectXNumberInArray(loto.lotoNumbers, loto.maxNumber));
+        setSelectedClassic(selectXNumberInArray(loto.lotoNumbers, loto.maxNumbers));
         setSelectedComplementary(selectXNumberInArray(loto.lotoComplementary, loto.maxComplementary));
     }
 
     const validate = () => {
-        if (selectedClassic.length < loto.maxNumber || selectedComplementary.length < loto.maxComplementary) {
-            showMessage(`You need ${loto.maxNumber - selectedClassic.length} numbers & ${loto.maxComplementary - selectedComplementary.length} complementary numbers`)
+        if (selectedClassic.length < loto.maxNumbers || selectedComplementary.length < loto.maxComplementary) {
+            showMessage(`You need ${loto.maxNumbers - selectedClassic.length} numbers & ${loto.maxComplementary - selectedComplementary.length} complementary numbers`)
             return
         }
-        participate(selectedClassic, loto.id)
+        participateLoto({
+            userId: userStore.id, 
+            lotoId: loto.id,
+            classic: selectedClassic,
+            complementary: selectedComplementary
+        })
     }
+
+    const play = () => {
+        if (!ticketStore.adsLoading) {
+            showAd()
+        }
+    };
 
     return (
         <View style={styles.main}>
+            <LotoValidation />
+            <Popup style={styles.popup} isOpen={true}>
+                <TouchableOpacity onPress={play}>
+                    <Text>Close</Text>
+                </TouchableOpacity>
+            </Popup>
             <Animated.View style={[styles.header]}>
                 <TouchableOpacity onPress={() => navigation.goBack()}>
                     <Image resizeMode="cover" style={styles.arrow} source={require('../../assets/icons/arrow.png')} />
                 </TouchableOpacity>
                 <View style={styles.title}>
                    <SharedElement style={[styles.imageContainer]} id={`loto.${loto.id}.image`}>
-                        <Animated.Image resizeMode="cover" style={[styles.image]} source={loto.imageUrl} />
+                        <Animated.Image resizeMode="cover" style={[styles.image]} source={{ uri: loto.imageUrl }} />
                     </SharedElement>
                     <Animated.View style={[styles.mask, titleStyle]}>
                         <Text style={styles.titleText}>{ loto.title }</Text>
@@ -82,20 +105,9 @@ const ChooseNumbersLoto = ({ route }: ChooseNumbersLotoProps) => {
                 <LotoInfos loto={loto} />
                 <LotoTicketsHistory id={loto.id} />
             </Animated.View>
-            <View >
-                <View style={styles.numbers}>
-                {
-                    selectedClassic.map((n, idx) => <Text key={idx} style={styles.number}>{n} {idx < selectedClassic.length - 1 && '- '}</Text>)
-                }
-                </View>
-                <View style={styles.numbers}>
-                {
-                    selectedComplementary.map((n, idx) => <Text key={idx} style={styles.number}>{n} {idx < selectedComplementary.length - 1 && '- '}</Text>)
-                }
-                </View>
-            </View>
+            <LotoDisplayNumbers classic={selectedClassic} complementary={selectedComplementary} loto={loto} />
             <View>
-                <LotoGrid numbers={loto.lotoNumbers} onPress={number => onPress(selectedClassic, setSelectedClassic, number, loto.maxNumber)} selected={selectedClassic}/>
+                <LotoGrid numbers={loto.lotoNumbers} onPress={number => onPress(selectedClassic, setSelectedClassic, number, loto.maxNumbers)} selected={selectedClassic}/>
                 <LotoGrid numbers={loto.lotoComplementary} onPress={number => onPress(selectedComplementary, setSelectedComplementary, number, loto.maxComplementary)} selected={selectedComplementary} type="complementary" />
             </View>
             <LotoButtons onPressRandom={random} onPressValidate={validate} />
@@ -161,4 +173,23 @@ const styles = StyleSheet.create({
         fontSize: 36,
         color: '#000'
     },
+    popup: {
+        width: width - 60,
+        height: 200,
+        backgroundColor: '#fff',
+        top: height / 2 - 100,
+        left: 30,
+        zIndex: 2,
+        borderRadius: 20,
+        justifyContent: 'center',
+        alignItems: 'center',
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 4,
+        },
+        shadowOpacity: 0.32,
+        shadowRadius: 15.46,
+        elevation: 10,
+    }
 });

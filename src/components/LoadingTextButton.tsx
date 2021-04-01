@@ -20,10 +20,10 @@ const LoadingTextButton = ({ loading, text, style }: LoadingButtonProps) => {
         transform: [{
             translateY: animation.interpolate({
                 inputRange: [0 , 1],
-                outputRange: [27, -30]
+                outputRange: [29, -30]
             })
         }]
-    }
+    };
     const lottieStyle = {
         opacity: animation.interpolate({
             inputRange: [0 , 1],
@@ -32,10 +32,10 @@ const LoadingTextButton = ({ loading, text, style }: LoadingButtonProps) => {
         transform: [{
             translateY: animation.interpolate({
                 inputRange: [0 , 1],
-                outputRange: [0, -130 / 2 + (style.fontSize || 18)]
+                outputRange: [0, -130 / 2 + style.fontSize - 6]
             }),
         }]
-    }
+    };
 
     useEffect(() => {
         lottie.current.play()
