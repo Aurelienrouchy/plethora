@@ -42,7 +42,7 @@ export const UserReducer = (state: UserStateType = initialState, action: Actions
                 experiences: undefined,
                 token: undefined,
                 lastname: undefined,
-                firstName: undefined,
+                firstname: undefined,
                 photoUrl: undefined,
                 email: undefined,
                 provider: undefined,

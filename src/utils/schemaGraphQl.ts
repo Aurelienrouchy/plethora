@@ -76,8 +76,10 @@ export const LOGIN_OR_REGISTER = gql`
             lastname
             photoUrl
             email
+            provider
             coins
             trees
+            experiences
         }
     }
 `;

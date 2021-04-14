@@ -29,6 +29,7 @@ const ChooseNumbersLoto = ({ route }: ChooseNumbersLotoProps) => {
     const loto = store.lotos.filter(lt => lt.id === id)[0];
     const navigation = useNavigation();
     
+    const [showNeedCoins, setShowNeedCoins] = useState(false);
     const animation = useRef( new Animated.Value(0)).current;
     const titleStyle = {
         opacity: animation.interpolate({ inputRange: [0, 1], outputRange: [0, 0.7]})
@@ -68,6 +69,13 @@ const ChooseNumbersLoto = ({ route }: ChooseNumbersLotoProps) => {
             showMessage(`You need ${loto.maxNumbers - selectedClassic.length} numbers & ${loto.maxComplementary - selectedComplementary.length} complementary numbers`)
             return
         }
+
+        if (loto.cost > userStore.coins) {
+            setShowNeedCoins(true);
+            setTimeout(() => setShowNeedCoins(false), 2000)
+            return 
+        }
+
         participateLoto({
             userId: userStore.id, 
             lotoId: loto.id,
@@ -76,19 +84,11 @@ const ChooseNumbersLoto = ({ route }: ChooseNumbersLotoProps) => {
         })
     }
 
-    const play = () => {
-        if (!ticketStore.adsLoading) {
-            showAd()
-        }
-    };
-
     return (
         <View style={styles.main}>
             <LotoValidation />
-            <Popup style={styles.popup} isOpen={true}>
-                <TouchableOpacity onPress={play}>
-                    <Text>Close</Text>
-                </TouchableOpacity>
+            <Popup style={styles.popup} isOpen={showNeedCoins}>
+                    <Text>You need {loto.cost} coins</Text>
             </Popup>
             <Animated.View style={[styles.header]}>
                 <TouchableOpacity onPress={() => navigation.goBack()}>

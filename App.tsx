@@ -38,7 +38,7 @@ LogBox.ignoreLogs(['Remote debugger']);
 export default function App() {
 	const [isReady, setIsReady] = useState(false);
 	const [loaded] = useFonts(fonts);
-
+	
 	setupAds();
 
 	useEffect(() => {

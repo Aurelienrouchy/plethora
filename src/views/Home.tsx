@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Dimensions, ScrollView, Animated } from 'react-native';
 import { useDispatch } from 'react-redux';
 import { toggleDrawer } from '../provider/app/app.actions';
@@ -8,10 +8,31 @@ import Header from '../components/Header';
 import Lotos from '../components/Lotos';
 import Tickets from '../components/Tickets';
 import { useTiming } from '../utils/hooks';
+import { gql, useSubscription } from '@apollo/client';
 
 const { width, height } = Dimensions.get('screen');
 
+const LOTO_DRAW = gql`
+	subscription {
+		lotoDraw {
+			classic
+			complementary
+		}
+	}
+`;
+
 const Home = () => {
+    const { data, loading, error} = useSubscription(LOTO_DRAW);
+
+	useEffect(() => {
+		console.log('datadatadata', data)
+	}, [data])
+
+	useEffect(() => {
+		console.log('errorerrorerror', error)
+	}, [error])
+
+    
     const dispatch = useDispatch();
     const store = useAppStore();
     const animation = useTiming(store.drawerIsOpen);

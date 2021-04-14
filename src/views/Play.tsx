@@ -12,7 +12,6 @@ import { setIsReward, setRewardVisible } from '../provider/tickets/tickets.actio
 import { addCoins, addExperiences } from '../provider/user/user.actions';
 import { useTiming } from '../utils/hooks';
 import { getScratchNumbers } from '../utils/mutation';
-import { GET_SCRATCH_NUMBERS } from '../utils/schemaGraphQl';
 
 const { width, height } = Dimensions.get('screen');
 

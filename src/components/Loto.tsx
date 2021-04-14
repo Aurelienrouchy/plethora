@@ -7,7 +7,7 @@ import { useUserStore } from '../utils/store';
 import LotoInfos from './LotoInfos';
 
 interface LotoProps {
-    loto: loto
+    loto: loto;
 }
 
 const Loto = ({ loto }: LotoProps) => {

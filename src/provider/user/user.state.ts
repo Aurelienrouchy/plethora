@@ -5,7 +5,7 @@ export const state = {
     experiences: undefined,
     token: undefined,
 	lastname: undefined,
-    firstName: undefined,
+    firstname: undefined,
     photoUrl: undefined,
     email: undefined,
     provider: undefined,

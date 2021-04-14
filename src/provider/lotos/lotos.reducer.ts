@@ -13,7 +13,6 @@ export const LotosReducer = (state: LotosStateType = initialState, action: Actio
     switch (action.type) {
         case PARTICIPATE_LOTO: {
             const ticket = action.payload;
-            console.log('reducer', ticket)
             const lotos = state.lotos.map(loto => {
                 if (loto.id === ticket.lotoId) {
                     return {

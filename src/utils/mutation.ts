@@ -11,7 +11,6 @@ export const participateLotoAsync = async (input) => {
                 input
             }
         });
-        console.log(res)
         const ticket = res?.data?.participateLoto;
         return ticket;
     } catch (err) {
@@ -25,7 +24,6 @@ export const getScratchNumbers = async (ticketId: string) => {
             mutation: GET_SCRATCH_NUMBERS,
             variables: { ticketId }
         })
-        console.log(res)
         const data = res.data.getScratchNumbers;
         return data;
     } catch (err) {

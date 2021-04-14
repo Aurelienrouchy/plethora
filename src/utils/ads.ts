@@ -45,7 +45,7 @@ export const useReward = () =>
 
 export const setupAds = async () => {
     // AdMobRewarded.setTestDeviceID('EMULATOR');
-    await AdMobRewarded.setAdUnitID('ca-app-pub-1586751755244367/3248128330');
+    await AdMobRewarded.setAdUnitID('ca-app-pub-1586751755244367/4792106533');
 };
 
 export const isReady = async () => await AdMobRewarded.getIsReadyAsync();

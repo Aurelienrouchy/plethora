@@ -13,7 +13,7 @@ export type UserType = {
     trees: number | undefined;
     experiences: number | undefined;
     token: string | undefined;
-    firstName: string | undefined;
+    firstname: string | undefined;
     lastname: string | undefined;
     photoUrl: string | undefined;
     email: string | undefined;
@@ -26,7 +26,7 @@ export interface UserStateType {
     trees: number | undefined;
     experiences: number | undefined;
     token: string | undefined;
-    firstName: string | undefined;
+    firstname: string | undefined;
     lastname: string | undefined;
     photoUrl: string | undefined;
     email: string | undefined;
@@ -58,7 +58,7 @@ interface AddTreesAction {
 	type: typeof ADD_TREES;
 	trees: number;
 }
-interface AddExperienceAction {
+interface AddExperiencesAction {
 	type: typeof ADD_EXPERIENCES;
 	exp: number;
 }
@@ -69,6 +69,6 @@ export type ActionsType =
     | AddCoinsAction
     | RemoveCoinsAction
     | AddTreesAction
-    | AddExperienceAction
+    | AddExperiencesAction
     | SetAuthLoadingAction;
 

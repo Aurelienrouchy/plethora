@@ -1,14 +1,10 @@
-import React, {
-    useState, useEffect, useContext, useLayoutEffect,
-} from 'react';
+import React from 'react';
 import {
-    StyleSheet, View, Animated, Text, TouchableOpacity, Image, Dimensions, ScrollView,
+    StyleSheet, View, Text, Dimensions, ScrollView,
 } from 'react-native';
 import { useLotosStore } from '../utils/store';
-// import { useQuery } from '@apollo/react-hooks';
 
 import Loto from './Loto';
-// import { GET_RAFFLES } from '../graphql/queries.js';
 const { width, height } = Dimensions.get('screen');
 
 export default function Lotos() {

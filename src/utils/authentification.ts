@@ -1,7 +1,6 @@
 import * as Google from 'expo-google-app-auth';
 import * as SecureStore from 'expo-secure-store';
-import { participate, setLotos } from '../provider/lotos/lotos.actions';
-import { addCoins, addExperiences, addTrees } from '../provider/user/user.actions';
+import { setLotos } from '../provider/lotos/lotos.actions';
 import { setAuthLoading, signIn } from '../provider/user/user.actions';
 
 import { LOGIN_OR_REGISTER } from './schemaGraphQl';

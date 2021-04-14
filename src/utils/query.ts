@@ -42,7 +42,12 @@ export const getUserTickets = async (userId: string) => {
             query: GET_USER_TICKETS,
             variables: { userId }
         })
-        const lotos = res.data.getUserTickets;
+        const lotos = res.data.getUserTickets.mpa(lt => ({
+            ...lt,
+            classic: lt.classic.split(' ').sort((a, b) => a - b),
+            complementary: lt.complementary.split(' ').sort((a, b) => a - b),
+        }));
+
         return lotos;
     } catch (err) {
         showMessage('Error with user tickets')

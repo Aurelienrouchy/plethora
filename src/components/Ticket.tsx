@@ -58,7 +58,7 @@ const Ticket = ({ ticket, index, scrollXIndex, nextExp}: TicketProps) => {
                     {
                         isLocked ? (
                             <View style={styles.locked}>
-                                <Text style={styles.locked_text}>locked</Text>
+                                <Text style={styles.locked_text}>Locked</Text>
                             </View>
                         ) : null
                     }
@@ -146,11 +146,12 @@ const styles = StyleSheet.create({
     locked: {
         ...StyleSheet.absoluteFillObject,
         opacity: 0.5,
+        backgroundColor: '#000',
         justifyContent: 'center',
         alignItems: 'center',
     },
     locked_text: {
-        fontSize: 50,
+        fontSize: width / 12,
         color: '#fff',
         fontFamily: 'CocogooseRegular'
     }

@@ -14,8 +14,12 @@ interface ParticipateParams {
 export const participateLoto = async (ticketLoto: ParticipateParams) => {
     setLotoLoading(true)
     try {
-        const ticket = await participateLotoAsync(ticketLoto);
-        console.log(ticket)
+        const params = {
+            ...ticketLoto,
+            classic: ticketLoto.classic.sort((a, b) => a - b).join(' '),
+            complementary: ticketLoto.complementary.sort((a, b) => a - b).join(' '),
+        }
+        const ticket = await participateLotoAsync(params);
         if (ticket) {
             showValidation(true)
             setTimeout(() => showValidation(false), 2000)
