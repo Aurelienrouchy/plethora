@@ -2,6 +2,9 @@
     "expo": {
       "name": "plethoria",
       "version": "1.0.0",
+      "facebookScheme": "fb1108660579613157",
+      "facebookAppId": "1108660579613157",
+      "facebookDisplayName": "Plethoria",
       "android": {
         "versionCode": 1,
         "package": "com.plethoria",

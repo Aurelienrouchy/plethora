@@ -9,7 +9,6 @@ import LotoInfos from '../components/LotoInfos';
 import LotoTicketsHistory from '../components/LotoTicketsHistory';
 import { participateLoto } from '../utils/loto';
 import { useLotosStore, useUserStore } from '../utils/store';
-import { showMessage } from '../utils/message';
 import LotoDisplayNumbers from '../components/LotoDisplayNumbers';
 import { useTiming } from '../utils/hooks';
 

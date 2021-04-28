@@ -9,11 +9,10 @@ import LotoInfos from '../components/LotoInfos';
 import LotoTicketsHistory from '../components/LotoTicketsHistory';
 import { participateLoto } from '../utils/loto';
 import { useLotosStore, useTicketStore, useUserStore } from '../utils/store';
-import { showMessage } from '../utils/message';
 import LotoDisplayNumbers from '../components/LotoDisplayNumbers';
 import LotoValidation from '../components/LotoValidation';
 import Popup from '../components/Popup';
-import { showAd } from '../utils/ads';
+import Toast from 'react-native-toast-message';
 
 const { width, height } = Dimensions.get('screen');
 
@@ -66,7 +65,10 @@ const ChooseNumbersLoto = ({ route }: ChooseNumbersLotoProps) => {
 
     const validate = () => {
         if (selectedClassic.length < loto.maxNumbers || selectedComplementary.length < loto.maxComplementary) {
-            showMessage(`You need ${loto.maxNumbers - selectedClassic.length} numbers & ${loto.maxComplementary - selectedComplementary.length} complementary numbers`)
+            Toast.show({
+                type: 'info',
+                text2: `You need ${loto.maxNumbers - selectedClassic.length} numbers & ${loto.maxComplementary - selectedComplementary.length} complementary numbers`
+            })
             return
         }
 

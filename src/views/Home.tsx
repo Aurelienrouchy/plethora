@@ -9,6 +9,7 @@ import Lotos from '../components/Lotos';
 import Tickets from '../components/Tickets';
 import { useTiming } from '../utils/hooks';
 import { gql, useSubscription } from '@apollo/client';
+import Toast from 'react-native-toast-message';
 
 const { width, height } = Dimensions.get('screen');
 
@@ -26,7 +27,7 @@ const Home = () => {
 
 	useEffect(() => {
 		console.log('datadatadata', data)
-	}, [data])
+	}, [data]);
 
 	useEffect(() => {
 		console.log('errorerrorerror', error)

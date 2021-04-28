@@ -4,7 +4,7 @@ import { getMainDefinition } from '@apollo/client/utilities';
 import { WebSocketLink } from '@apollo/client/link/ws';
 import { setContext } from "@apollo/client/link/context";
 import * as SecureStore from 'expo-secure-store';
-import { showMessage } from "./message";
+import Toast from "react-native-toast-message";
 
 // const httpLink = createHttpLink({ uri: 'https://izy-back.herokuapp.com/graphql' });
 const httpLink = createHttpLink({ uri: 'http://localhost:4000/graphql' });
@@ -48,7 +48,11 @@ const authLink = setContext(async (_, { headers }) => {
             }
         }
     } catch (err) {
-        showMessage(err.message)
+        Toast.show({
+            type: 'error',
+            text1: 'Error server',
+            text2: err.message
+        })
     }
 });
 

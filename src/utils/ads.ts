@@ -1,11 +1,8 @@
 import React, { useMemo } from 'react'
-import {
-    AdMobRewarded,
-    setTestDeviceIDAsync,
-  } from 'expo-ads-admob';
+import { AdMobRewarded } from 'expo-ads-admob';
 import { setAdsVisible, setAdsLoading, setScratchVisible, setIsReward } from '../provider/tickets/tickets.action';
 import { store as ticketsStore } from './store';
-import { showMessage } from './message';
+import Toast from 'react-native-toast-message';
   
 export const useReward = () => 
     useMemo(() => {
@@ -54,7 +51,11 @@ export const showAd = async () => {
     try {
         await AdMobRewarded.showAdAsync()
     } catch (err) {
-        showMessage(err.message)
+        Toast.show({
+            type: 'error',
+            text1: 'Error server',
+            text2: err.message
+        })
     }
 };
 
@@ -65,7 +66,11 @@ export const requestAd = async () => {
         setAdsLoading(false);
     } catch (err) {
         setAdsLoading(false)
-        showMessage(err.message)
+        Toast.show({
+            type: 'error',
+            text1: 'Error server',
+            text2: err.message
+        })
     }
 };
 

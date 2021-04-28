@@ -1,13 +1,14 @@
 import * as Google from 'expo-google-app-auth';
+import * as Facebook from 'expo-facebook';
 import * as SecureStore from 'expo-secure-store';
 import { setLotos } from '../provider/lotos/lotos.actions';
 import { setAuthLoading, signIn } from '../provider/user/user.actions';
 
 import { LOGIN_OR_REGISTER } from './schemaGraphQl';
 import client from './clientGraphQl';
-import { showMessage } from './message';
 import { getUserTickets } from './query';
 import { store as GlobalStore } from './store';
+import Toast from 'react-native-toast-message';
 
 export const authentification = async (provider: string) => {
     const store = GlobalStore.getState()?.lotos?.lotos;
@@ -16,7 +17,11 @@ export const authentification = async (provider: string) => {
         const user = provider === 'google' ? await signWithGoogle() : await signWithFacebook();
 
         if (!user) {
-            showMessage("Connection error");
+            Toast.show({
+                type: 'error',
+                text1: 'Error server',
+                text2: 'Connection error'
+            })
             return
         }
 
@@ -37,7 +42,11 @@ export const authentification = async (provider: string) => {
 
         signIn(user);
     } catch(err) {
-        showMessage("Authentication error")
+        Toast.show({
+            type: 'error',
+            text1: 'Error server',
+            text2: 'Authentification error'
+        })
     }
 }
 
@@ -68,25 +77,26 @@ export const signWithGoogle = async () => {
         setAuthLoading(false);
     } catch (err) {
         setAuthLoading(false);
-        showMessage(err.message);
+        Toast.show({
+            type: 'error',
+            text1: 'Error server',
+            text2: err.message
+        })
     }
 }; 
 
 export const signWithFacebook = async () => {
     try {
-        const res = await Google.logInAsync({
-            iosClientId: '108595256943-qq5i3mc7cn5u10ghoflb9hp9n3os10oc.apps.googleusercontent.com',
-            androidClientId: '108595256943-r6ogjvtbmqonlrbaonjcichnvpka43jo.apps.googleusercontent.com',
-            scopes: ['profile', 'email'],
-        });
+        await Facebook.initializeAsync({ appId: '1108660579613157' });
+        const res = await Facebook.logInWithReadPermissionsAsync({ permissions: ['public_profile'] });
 
         if (res.type === 'success') {
 
             const result =  await client.mutate({
                 mutation: LOGIN_OR_REGISTER,
                 variables: {
-                    token: res.accessToken,
-                    provider: 'google'
+                    token: res.token,
+                    provider: 'facebook'
                 }
             });
             const user = result?.data?.loginOrRegister;
@@ -94,9 +104,17 @@ export const signWithFacebook = async () => {
             return user;
             
         } else {
-            showMessage('No user found')
+            Toast.show({
+                type: 'error',
+                text1: 'Error server',
+                text2: 'Authentification error'
+            })
         }
     } catch (err) {
-        showMessage(err.message)
+        Toast.show({
+            type: 'error',
+            text1: 'Error server',
+            text2: err.message
+        })
     }
 }; 

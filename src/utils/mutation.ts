@@ -1,7 +1,7 @@
 
 import { GET_SCRATCH_NUMBERS, PARTICIPATE_LOTO } from "./schemaGraphQl"
-import { showMessage } from "./message";
 import client from './clientGraphQl';
+import Toast from "react-native-toast-message";
 
 export const participateLotoAsync = async (input) => {
     try {
@@ -14,7 +14,11 @@ export const participateLotoAsync = async (input) => {
         const ticket = res?.data?.participateLoto;
         return ticket;
     } catch (err) {
-        showMessage('Error with lotos loading')
+        Toast.show({
+            type: 'error',
+            text1: 'Error server',
+            text2: 'Error with lotos loading'
+        })
     }
 }
 
@@ -27,6 +31,10 @@ export const getScratchNumbers = async (ticketId: string) => {
         const data = res.data.getScratchNumbers;
         return data;
     } catch (err) {
-        showMessage('Error with user tickets')
+        Toast.show({
+            type: 'error',
+            text1: 'Error server',
+            text2: 'Error with ticket loading'
+        })
     }
 }

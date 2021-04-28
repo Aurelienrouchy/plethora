@@ -1,7 +1,6 @@
+import Toast from 'react-native-toast-message';
 import { participate, setLotoLoading, showValidation } from '../provider/lotos/lotos.actions';
-import { loto } from '../provider/lotos/lotos.types';
 import { removeCoins } from '../provider/user/user.actions';
-import { showMessage } from './message';
 import { participateLotoAsync } from './mutation';
 
 interface ParticipateParams {
@@ -30,7 +29,11 @@ export const participateLoto = async (ticketLoto: ParticipateParams) => {
 
         setLotoLoading(false)
     } catch (err) {
-        showMessage('Error server');
+        Toast.show({
+            type: 'error',
+            text1: 'Error server',
+            text2: err.message,
+        })
         setLotoLoading(false)
     }
 }

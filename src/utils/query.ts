@@ -1,6 +1,6 @@
-import { showMessage } from "./message";
 import { GET_LOTOS, GET_TICKETS, GET_USER_TICKETS } from "./schemaGraphQl";
 import client from './clientGraphQl';
+import Toast from "react-native-toast-message";
 
 export const getTickets = async () => {
     try {
@@ -20,7 +20,11 @@ export const getTickets = async () => {
         }));
         return tickets;
     } catch (err) {
-        showMessage('Error with tickets loading')
+        Toast.show({
+            type: 'error',
+            text1: 'Error server',
+            text2: 'Problem with initialize tickets'
+        })
     }
 }
 
@@ -32,7 +36,11 @@ export const getLotos = async () => {
         const lotos = res.data.getLotos;
         return lotos;
     } catch (err) {
-        showMessage('Error with lotos loading')
+        Toast.show({
+            type: 'error',
+            text1: 'Error server',
+            text2: 'Problem with initialize lotos'
+        })
     }
 }
 
@@ -50,6 +58,10 @@ export const getUserTickets = async (userId: string) => {
 
         return lotos;
     } catch (err) {
-        showMessage('Error with user tickets')
+        Toast.show({
+            type: 'error',
+            text1: 'Error server',
+            text2: 'Problem with initialize tickets'
+        })
     }
 }

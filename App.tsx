@@ -12,8 +12,8 @@ import { getTickets, getLotos } from './src/utils/query';
 import { setTickets } from './src/provider/tickets/tickets.action';
 import { useFonts } from 'expo-font';
 import { setLotos } from './src/provider/lotos/lotos.actions';
-import { showMessage } from './src/utils/message';
 import { cacheImagesAndBuild } from './src/utils/images';
+import Toast from 'react-native-toast-message';
 
 const images = [
 	require('./assets/icons/menu-dots.png'),
@@ -48,7 +48,11 @@ export default function App() {
 			const lotosFromServer = await getLotos();
 
 			if (!ticketsFormServer || !lotosFromServer) {
-				showMessage("Error server")
+				Toast.show({
+					type: 'error',
+					text1: 'Error server',
+					text2: 'Problem with initialize tickets'
+				})
 				return
 			}
 

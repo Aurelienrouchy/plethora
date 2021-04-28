@@ -1,8 +1,9 @@
-import React, { useEffect, useLayoutEffect, useMemo } from 'react';
-import { Animated, View } from 'react-native';
+import React, { useEffect, useLayoutEffect } from 'react';
+import { View } from 'react-native';
 import { enableScreens } from 'react-native-screens'
 import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator, StackCardInterpolationProps } from '@react-navigation/stack';
+import { createStackNavigator } from '@react-navigation/stack';
+import * as Application from 'expo-application';
 
 import { useUserStore } from '../utils/store';
 import SignIn from '../views/SignIn';
@@ -10,10 +11,10 @@ import Home from '../views/Home';
 import Play from '../views/Play';
 import { createSharedElementStackNavigator } from 'react-navigation-shared-element';
 import LotoGridView from '../views/LotoGridView';
-import ErrorDisplay from '../components/MessageDisplay';
 import { useReward } from '../utils/ads';
 import { AdMobRewarded } from 'expo-ads-admob';
 import History from '../views/History';
+import Toast from 'react-native-toast-message';
 
 enableScreens();
   
@@ -72,14 +73,14 @@ const Router = () => {
 
     useLayoutEffect(() => {
         addRewardListeners();
-
+        
         requestAd()
         return AdMobRewarded.removeAllListeners;
     }, []);
 
     return (
         <View style={{flex: 1}}>
-            <ErrorDisplay />
+            <Toast ref={(ref) => Toast.setRef(ref)} />
             <NavigationContainer>
                 <Stack.Navigator headerMode="none" >
                 { store.isLogin ? (
