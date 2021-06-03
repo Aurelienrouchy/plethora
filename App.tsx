@@ -14,6 +14,7 @@ import { useFonts } from 'expo-font';
 import { setLotos } from './src/provider/lotos/lotos.actions';
 import { cacheImagesAndBuild } from './src/utils/images';
 import Toast from 'react-native-toast-message';
+import { authentificationWithToken } from './src/utils/authentification';
 
 const images = [
 	require('./assets/icons/menu-dots.png'),
@@ -59,6 +60,7 @@ export default function App() {
 			setTickets(await cacheImagesAndBuild({ items: ticketsFormServer}))
 			setLotos(await cacheImagesAndBuild({ items: lotosFromServer }));
 
+			await authentificationWithToken()
 			setIsReady(true)
 		}
 		init();

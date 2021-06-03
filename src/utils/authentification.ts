@@ -4,13 +4,43 @@ import * as SecureStore from 'expo-secure-store';
 import { setLotos } from '../provider/lotos/lotos.actions';
 import { setAuthLoading, signIn } from '../provider/user/user.actions';
 
-import { LOGIN_OR_REGISTER } from './schemaGraphQl';
+import { LOGIN_OR_REGISTER, LOGIN_WITH_TOKEEN } from './schemaGraphQl';
 import client from './clientGraphQl';
 import { getUserTickets } from './query';
 import { store as GlobalStore } from './store';
 import Toast from 'react-native-toast-message';
 
-export const authentification = async (provider: string) => {
+export const authentificationWithToken = async () => {
+    try {
+        const token = await SecureStore.getItemAsync('token');
+
+        if (!token) {
+            return
+        }
+
+        const result =  await client.mutate({
+            mutation: LOGIN_WITH_TOKEEN,
+            variables: { token }
+        });
+
+        const user = result?.data?.loginWithToken;
+
+        if (!user) {
+            return
+        }
+
+        signIn(user)
+
+    } catch(err) {
+        Toast.show({
+            type: 'error',
+            text1: 'Error server',
+            text2: 'Connection error'
+        })
+    }
+}
+
+export const authentification = async (provider: 'google' | 'facebook') => {
     const store = GlobalStore.getState()?.lotos?.lotos;
 
     try {

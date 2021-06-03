@@ -43,6 +43,23 @@ export const GET_USER_TICKETS = gql`
     }
 `;
 
+export const LOGIN_WITH_TOKEEN = gql`
+    query LoginWithToken($token: String!) {
+        loginWithToken(token: $token) {
+            id
+            token
+            firstname
+            lastname
+            photoUrl
+            email
+            provider
+            coins
+            trees
+            experiences
+        }
+    }
+`;
+
 // MUTATION
 
 export const PARTICIPATE_LOTO = gql`
